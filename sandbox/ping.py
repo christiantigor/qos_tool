@@ -1,0 +1,36 @@
+import subprocess
+import re
+
+host = "www.google.com"
+
+try:
+    ping = subprocess.Popen(
+        ["ping", "-c", "4", host],
+        stdout = subprocess.PIPE,
+        stderr = subprocess.PIPE
+    )
+
+    out, error = ping.communicate()
+    print out
+
+    if out:
+        try:
+            matcher = re.compile("rtt min/avg/max/mdev = (\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
+            matched = matcher.findall(out)
+            mini = matched[0][0]
+            avrg = matched[0][1]
+            maxi = matched[0][2]
+            mdev = matched[0][3]
+            print mini, avrg, maxi, mdev
+        except:
+            print "!!! regex error !!!"
+    else:
+        #no output
+        mini = 0
+        avrg = 0
+        maxi = 0
+        mdev = 0
+        print mini, avrg, maxi, mdev
+
+except subprocess.CalledProcessError:
+    print "!!! ping error !!!"

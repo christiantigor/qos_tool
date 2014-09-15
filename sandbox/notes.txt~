@@ -1,0 +1,59 @@
+Command for QoS Solution
+
+1. lsusb = list usb
+2. dmesg|tail = show ttyusb
+
+Prerequisite:
+- Internet connection
+	- cmd: run 'wvdial' on terminal. Configuration on /etc/wvdial.conf
+	       kill wvdial 'sudo killall pppd' on terminal
+- SMS (verify if needed)
+	- cmd: run 'sms.py' on terminal
+- Call (verify if needed)
+
+Info to be collected:
+
+- Operator
+	- cmd: AT+COPS?
+	- rtn: +COPS: 0,0,"TELKOMSEL",0
+	- mng: mode auto, long format alphanumeric, operator name, GSM network
+
+- Signal strength (RSSI)
+	- cmd: AT+CSQ
+	- rtn: +CSQ: 23,99
+	- mng: RSSI -67dBm, BER is not supported
+
+- Network type (GRPS or 3G)
+	- cmd: AT^SYSINFOEX
+	- rtn: ^SYSINFOEX:2,3,0,1,,1,GSM,3,EDGE
+	- mng: valid service, PS+CS service (phone and inet), non roaming state, valid USIM card state, reserved, system mode 0, GSM, sub mode 3, EDGE
+
+- Ping duration
+	- cmd: run ping.py (custom made)
+	- rtn: min,avg,max,mdev (future: website, pkg transmitted, pkg received)
+- Download/upload speed
+	- cmd: run inetspeed.py (custom made) need to install speedtest-cli
+	- rtn: download and upload speed (future: target server, its location)
+- Location // Can be obtain if tower location is known
+- Tower location // Not complete, as we can get full Cell Id
+	- cmd: AT+CREG=2 then AT+CREG?
+	- rtn: +CGREG: 2,1,"080E","1C3F"
+	- mng: enable reporting, local network reg, position code, cell info (should be 4 byte, but 2 byte instead)
+- Percentage of SMS received // SMS notification delivery report, not success yet
+- Percentage of call succeed
+
++++++++++++++
+12 Sept 2014
++++++++++++++
+To get SMS notification delivery report
+
+src:(http://bishwahang.blogspot.com/2013/05/getting-sms-deliver-notification-from.html)
+
+Send AT+CGMS directly typing via minicom
+	- [ctrl-z] in minicom -> [ctrl-a]
+----------
+src:(http://www.smsiseasy.com/technicalinfo.html#report)
+
+AT+CNMI=2,2,0,1,0
+CMS error: 303 (command not supported)
+
