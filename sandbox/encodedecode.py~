@@ -1,0 +1,10 @@
+s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+def ascii_to_gsm(ch):
+    return bin(65 + s.index(ch))
+
+print ascii_to_gsm('A')
+print '--'
+
+binary_stream = ''.join([str(ascii_to_gsm(ch))[2:] for ch in s])
+print binary_stream.encode(hex)

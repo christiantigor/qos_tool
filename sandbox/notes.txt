@@ -57,3 +57,60 @@ src:(http://www.smsiseasy.com/technicalinfo.html#report)
 AT+CNMI=2,2,0,1,0
 CMS error: 303 (command not supported)
 
++++++++++++++
+15 Oct 2014
++++++++++++++
+Minicom
+
+run cmd 'minicom -o -s'		//must disable WVDial
+on Serial port setup
+	- Serial Device: /dev/ttyUSB0
+	- Bps: 115200 8N1
+	- HW FC: No
+on Screen and keyboard
+	- Local Echo: Yes
+
+OR run cmd 'minicom ttyUSB0'
+minicom configuration files are on /etc/minicom
+
+To make Huawei E3531 recognized as modem, see links below:
+	- http://www.raspberrypi.org/forums/viewtopic.php?f=36&t=80925
+	- http://www.draisberghof.de/usb_modeswitch/bb/viewtopic.php?f=2&t=1951
+	- http://www.raspberrypi.org/forums/viewtopic.php?t=32307&p=285871 (to run usb_modeswitch from reboot)
+
+'udevadm --attribute-walk' cause rpi to hang.
+	- procedure to connect busnum and devnum to ttyUSB
+	http://askubuntu.com/questions/184526/how-to-get-bus-and-device-relationship-for-a-dev-ttyusb
+
+Instead, use 'udevadm info --query=symlink --name=ttyUSB0' to know whether it is a gsm modem or not
+
++++++++++++++
+18 Oct 2014
++++++++++++++
+- Success in converting ascii text to pdu format
+- Send *123# using XL sim card. Returns different output after two test attempts:
+  (decode using http://smstools3.kekekasvi.com/topic.php?id=288)
+First: D0F0BA4C0751CBF2765D1E46871431500DD674D35731186CDA9CB26A68394B0AB7C9C50A1948068335DDF4550C06834D9B53560C2D6749E132590DA6988168CA701BE42CB3E1AC98ACCD6EB76AF3B7BCCC0249E1311C0CA6A08162CA701BE42CB3E12C45EE067296F174450E078AD6D37405
+Second:
+D0F0BA4C0751CBF2765D1E46871431500DD674D35731186CDA9CB26A68394B0AB7C9C50A1948068335DDF4550C06834D9B53560C2D6749E132590DA6988168CA701BE42CB3E1AC98ACCD6EB76AF3B7BCCC0249E1311C0CA6A08162CA701BE42CB3E12C45EE067296F174450E078AD6D37405
+
+//SMS
+Default AT+CSMP ,,0,0
+Default AT+CNMI 0,0,0,0,0
+
++++++++++++++
+19 Oct 2014
++++++++++++++
+SMS delivery report
+
+07912618485400F906060D91261815747995F8410181024421824101810244218200
+OR +CMGL: 0,"REC READ",6,6,"+6281514797598",145,"14/10/18,20:44:12+28","14/10/18,20
+
+07912618485400F906070D91261815747995F8410181028432824101810284328200
+OR +CMGL: 1,"REC READ",6,7,"+6281514797598",145,"14/10/18,20:48:23+28","14/10/18,20
+
+07912618485400F906080D91261815747995F8410181124194824101811242428200
+OR +CMGL: 2,"REC READ",6,8,"+6281514797598",145,"14/10/18,21:14:49+28","14/10/18,20
+
+07912618485400F906090D91261815747995F8410181122294824101811242038200
+OR +CMGL: 3,"REC READ",6,9,"+6281514797598",145,"14/10/18,21:22:49+28","14/10/18,20
