@@ -114,3 +114,19 @@ OR +CMGL: 2,"REC READ",6,8,"+6281514797598",145,"14/10/18,21:14:49+28","14/10/18
 
 07912618485400F906090D91261815747995F8410181122294824101811242038200
 OR +CMGL: 3,"REC READ",6,9,"+6281514797598",145,"14/10/18,21:22:49+28","14/10/18,20
+
++++++++++++++
+21 Oct 2014
++++++++++++++
+Voice quality measurement
+
+- Use P.563 algorithm (3SQM) Single Sided Speech Quality Measure
+- Download library from: http://www.itu.int/rec/T-REC-P.563-200405-I/en
+	- Compile by following tutorial on readme
+	- for conflicting types for 'round' error:
+		- change round to roundd in
+			- include/tools.h
+			- source/tools.c
+
+
+ 

@@ -73,21 +73,24 @@ def main():
     try:
         for modem in listModem:
             #get network operator
-            #operator = qosparam.operator(modem.symlink)
-            #print operator
+            operator = qosparam.operator(modem.symlink)
+            print "Operator: %s" %operator
 
             #get sim card balance
-            #balance =  qosparam.balance(operator,modem.symlink)
-            #print balance
+            balance =  qosparam.balance(operator,modem.symlink)
+            print "Balance: %s" %balance
 
             #get sms delivery percentage
             phone = "+6281514797598"
             trial,suc = qosparam.smsdelivery(phone,2,modem.symlink)
-            print "%d sms sent, %d sms received" % (trial,suc)
+            perc = suc / float(trial) * 100
+            print "SMS:%d sent, %.2f%% received" % (trial,perc)
             
             #get call success
 
             #get call quality
+            sQuality = qosparam.speechquality(modem.symlink)
+            print "Voice MOS: %s" %sQuality
     except:
         print "!!! problems in get parameter !!!"
         sys.exit(1)
