@@ -120,4 +120,21 @@ OR +CMGL: 3,"REC READ",6,9,"+6281514797598",145,"14/10/18,21:22:49+28","14/10/18
 +++++++++++++
 Voice quality measurement
 
-Use P.563 algorithm (3SQM) Single Sided Speech Quality Measure 
+- Use P.563 algorithm (3SQM) Single Sided Speech Quality Measure
+- Download library from: http://www.itu.int/rec/T-REC-P.563-200405-I/en
+	- Compile by following tutorial on readme
+	- for conflicting types for 'round' error:
+		- change round to roundd in
+			- include/tools.h
+			- source/tools.c
+
+
++++++++++++++
+22 Oct 2014
++++++++++++++
+RPi can handle 2 modem
+Order usb gps
+QoS parameters with multiple SIM:
+	- balance	
+	- sms
+	- voice (but low volume is recorded)

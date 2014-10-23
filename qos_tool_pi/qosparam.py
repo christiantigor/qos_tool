@@ -24,8 +24,10 @@ def balance(operator,ttyUsbx):
     try:
         if operator == '"XL"':
             return simbalance.xlBalance(ttyUsbx)
-        elif operator == '"Telkomsel"':
-            pass
+        elif operator == '"TELKOMSEL"':
+            return simbalance.telkomselBalance(ttyUsbx)
+        elif operator == '"INDOSAT"':
+            return simbalance.indosatBalance(ttyUsbx)
         else:
             print "operator unknown"
             sys.exit(1)
@@ -58,19 +60,19 @@ def smsdelivery(phoneNum,trial,ttyUsbx):
             #print msg
             #modem.flushOutput()
             modem.write(cmd)
-            time.sleep(.5)
+            time.sleep(1)
             modem.write(msg)
-            time.sleep(.5)
+            time.sleep(1)
             modem.write(chr(26))
-            time.sleep(.5)
+            time.sleep(1)
             rspn = modem.read(1024)
             #print rspn
             refNumPattern = r'CMGS: (\d+)'
             num = re.findall(refNumPattern,rspn)
             refNum.append(num[0])
-            time.sleep(.5)
+            time.sleep(1)
         #wait (delay for sms to reach destination)
-        time.sleep(2)
+        time.sleep(10)#telkomsel need longer delay for sms delivery report
         #print refNum
         #list all sms
         modem.write('AT+CMGL="ALL"\r')
@@ -81,11 +83,11 @@ def smsdelivery(phoneNum,trial,ttyUsbx):
         ocr = 0
         for t in refNum:
             tPattern = ',6,' + t
-            #from my observation, only received sms has report
+            #from my observation, only the received sms has a report
             if re.search(tPattern,rspn):
                 ocr += 1
-        #return occurance per trial
-        return trial,ocr
+        #return occurance
+        return ocr
         
     except:
         print "!!! get sms delivery percentage error  !!!"
@@ -93,7 +95,7 @@ def smsdelivery(phoneNum,trial,ttyUsbx):
         sys.exit(1)
 
 #get 3SQM - single sided speech quality measurement
-def speechquality(ttyUsbx):
+def speechquality(operator,ttyUsbStream,ttyUsbx):
     #init
     try:
         chunk = 1024
@@ -102,10 +104,10 @@ def speechquality(ttyUsbx):
         rate = 8000
         dummyRate = int(2.5*rate)#in rpi, if rate is set 8000, it only record 2 sec although recordSecs is set 5
         recordSecs = 5
-        waveOutName = "calloutput.wav"
+        #waveOutName = "calloutput.wav"
 
         pM = "/dev/"+ttyUsbx
-        pS = "/dev/ttyUSB1"#PERLU PROGRAM TAMBAHAN UNTUK MENGECEK PORT YANG MENGELUARKAN DATA
+        pS = "/dev/"+ttyUsbStream
         modem = serial.Serial(port=pM,baudrate=115200,timeout=1,rtscts=0,xonxoff=0)
         stream = serial.Serial(port=pS,baudrate=115200,timeout=1,rtscts=0,xonxoff=0)
     except:
@@ -116,7 +118,18 @@ def speechquality(ttyUsbx):
 
     #call IVR
     try:
-        modem.write("ATD123;\r") #for XL number only
+        if operator == '"XL"':
+            cmd = "ATD123;\r"
+            waveOutName = "xlCalloutput.wav"
+        elif operator == '"TELKOMSEL"':
+            cmd = "ATD888;\r"
+            waveOutName = "telkomselCalloutput.wav"
+        elif operator == '"INDOSAT"':
+            cmd = "ATD388;\r" #im3
+            waveOutName = "indosatCalloutput.wav"
+        else:
+            waveOutName = "elseCalloutput.wav"
+        modem.write(cmd)
         time.sleep(2)
         modem.write("AT^DDSETEX=2\r")
         time.sleep(3)

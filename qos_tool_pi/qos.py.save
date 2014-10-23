@@ -121,18 +121,24 @@ def main():
         curs = db.cursor()
         
         #use python context manager for automatic rollback
+        op = '"TELKOMSEL"'
+        bl = '2200'
+        sms = '50.00'
+        mos = '1.0023'
 
         for m in listModem:
-            cmd = ('INSERT INTO testresult VALUES (CURRENT_DATE(),NOW(),'+str(m.operator)+
-                   ',"'+str(m.balance)+'","'+str(m.smsPerc)+'","'+str(m.sQuality)+'","no"'+')'
-                  )
+            cmd = ("INSERT INTO testresult VALUES (CURRENT_DATE(),NOW()," + m.operator + ",
+" + m.balance + "," + m.smsPerc + "," + m.sQuality + "no" + ")"
+            print modem.operator
+            print modem.balance
+            print modem.smsPerc
+            print modem.sQuality
+
+        with db:
+            cmd = "INSERT INTO testresult VALUES (CURRENT_DATE(),NOW()," + op + "," + bl + "," + sms + "," + mos + "no" + ")"
             print cmd
-            with db:
-                curs.execute(cmd)
-        db.close()
     except:
         print "!!! problems put data to database  !!!"
-        db.close()
         sys.exit(1)
 
 if __name__ == '__main__':

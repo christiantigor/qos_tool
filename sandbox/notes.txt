@@ -129,4 +129,20 @@ Voice quality measurement
 			- source/tools.c
 
 
- 
++++++++++++++
+22 Oct 2014
++++++++++++++
+RPi can handle 2 modem
+Order usb gps
+QoS parameters with multiple SIM:
+	- balance	
+	- sms
+	- voice (but low volume is recorded)
+
++++++++++++++
+23 Oct 2014
++++++++++++++
+MySQL Local Database
+Important command:
+- change column data type: http://stackoverflow.com/questions/1356866/how-do-i-change-the-data-type-for-a-column-in-mysql
+- insert column after other column: http://blog.sqlauthority.com/2013/03/11/sql-server-how-to-add-column-at-specific-location-in-table/
