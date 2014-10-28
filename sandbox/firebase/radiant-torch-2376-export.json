@@ -1,0 +1,36 @@
+{
+  "qosresult" : [ {
+    "operator" : "Indosat",
+    "smsPerc" : 60
+  }, {
+    "operator" : "XL",
+    "smsPerc" : "20"
+  }, {
+    "operator" : "Simpati",
+    "smsPerc" : 50
+  } ],
+  "users" : {
+    "-J_JeBFGzLhEnZCwlwCK" : {
+      "name" : "Ozgur"
+    },
+    "-J_JeWIL6HMakf9nc_7F" : {
+      "name" : "Ozgur"
+    },
+    "-J_JiWgbREghCsWFgZYB" : [ {
+      "addr" : "Zagreb",
+      "name" : "Ozgur"
+    } ],
+    "-J_Jj20G6MnJ1n2b13Jw" : [ {
+      "addr" : "Zagreb",
+      "name" : "Ozgur"
+    } ],
+    "-J_JjAD594wNACzI9EB_" : [ {
+      "addr" : "Zagreb",
+      "name" : "Ozgur"
+    } ],
+    "-J_JjE_UjPcQ7MTg1T5g" : [ {
+      "addr" : "Zagreb",
+      "name" : "Ozgur"
+    } ]
+  }
+}

@@ -1,0 +1,38 @@
+[
+{
+	"id": "001",
+	"owner": "Amri",
+	"addr": "Jl. Gatot Subroto, Jakarta 12060 Indonesia",
+	"phone": "021-5251008",
+	"totSpp": 50485,
+	"stock": 49880,
+	"abnrmlDisp": 5,
+	"status": "Normal",
+	"lat": -6.227057,
+	"lng": 106.818974
+},
+{
+	"id": "002",
+	"owner": "Budi",
+	"addr": "Jl. Jend. Sudirman Pintu Satu Senayan GBK",
+	"phone": "021-25554140",
+	"totSpp": 45000,
+	"stock": 42500,
+	"abnrmlDisp": 10,
+	"status": "Suspicious",
+	"lat": -6.224479,
+	"lng": 106.803643
+},
+{
+	"id": "003",
+	"owner": "Charlie",
+	"addr": "Jl. Jend. Sudirman Kav. 47-48, Plaza Sentral Gnd. Fl.",
+	"phone": "021-5710922",
+	"totSpp": 39000,
+	"stock": 38800,
+	"abnrmlDisp": 1,
+	"status": "Normal",
+	"lat": -6.215572,
+	"lng": 106.816663
+}
+]
