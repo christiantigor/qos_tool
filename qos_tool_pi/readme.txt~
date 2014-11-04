@@ -1,0 +1,36 @@
+Install usb_modeswitch properly:
+  + Source:
+    + http://www.raspberrypi.org/forums/viewtopic.php?f=36&t=80925
+    + http://www.draisberghof.de/usb_modeswitch/bb/viewtopic.php?f=2&t=1951
+    + http://www.raspberrypi.org/forums/viewtopic.php?t=32307&p=285871 (to run usb_modeswitch from reboot)
+  + Edit /lib/udev/rules.d/40-usb_modeswitch.rules end add
+    # Huawei E3131h-2
+    ATTRS{idVendor}=="12d1", ATTRS{idProduct}=="15ca", RUN+="usb_modeswitch %b/%k"
+  + Create message file in /etc/usb_modeswitch.d/12d1\:15ca and add text
+    #Huawei E3131 (Variant)
+    TargetVendor= 0x12d1
+    TargetProductList="1506"
+    MessageContent="55534243123456780000000000000011062000000100000000000000000000"
+  + Create the file: /etc/udev/rules.d/41-usb_modeswitch.rules with this content:
+    ATTRS{idVendor}=="2357", ATTRS{idProduct}=="0200", RUN+="usb_modeswitch '%b/%k'"
+  
+
+The known dependencies for QoS Tool:
+
+  + ppp, usb-modeswitch (sudo apt-get install ppp usb-modeswitch)
+
+  + speedtest-cli (pip install speedtest-cli)
+
+  + simple-sms (pip install simplesms)
+
+    + pySerial
+
+    + pyGSM (copy repo then 'sudo pyton setup.py install')
+
+  + p.563
+
+  + pyaudio (sudo apt-get install python-pyaudio)
+
+  + mysql-server (sudo apt-get install mysql-server)
+
+  + python-mysqldb (sudo apt-get install python-mysqldb)

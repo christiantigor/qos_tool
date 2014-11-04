@@ -1,7 +1,53 @@
-import re, serial, subprocess, sys, time, uuid
+import re, requests, serial, subprocess, sys, time, uuid
+from json import dumps
 import simbalance
 import pyaudio
 import wave
+
+#tower location from mcc-mnc-lac-cid
+def towerlocation(ttyUsbx):
+    try:
+        p = "/dev/"+ttyUsbx
+        modem = serial.Serial(port=p,baudrate=115200,timeout=0.5,rtscts=0,xonxoff=0)
+        modem.write("AT+CIMI\r")
+        rspn = modem.read(1024)
+        mcc = int(rspn[10]+rspn[11]+rspn[12])
+        mnc = int(rspn[13]+rspn[14])
+        #print mcc
+        #print mnc
+        modem.write("AT+CREG=2\r")
+        time.sleep(.5)
+        modem.write("AT+CREG?\r")
+        rspn = modem.read(1024)
+        pattern = re.compile('"\w*"')
+        data = pattern.findall(rspn)
+        lac = data[0]
+        lac = lac.replace('"','')
+        cid = data[1]
+        cid = cid.replace('"','')
+        lac = int(lac,16)
+        cid = int(cid,16)
+        #print lac
+        #print cid
+        payload = {
+            'token': '114087104419',
+            'mcc': mcc,
+            'mnc': mnc,
+            'cells': [{'cid': cid, 'lac': lac}]
+        }
+        #print payload
+        rspn = requests.post(url='http://ap1.unwiredlabs.com/v2/process.php',
+                             data=dumps(payload),
+                             headers={'content-encoding': 'application/json'})
+        o = rspn.json()
+        lat = str(o[u'lat'])
+        lon = str(o[u'lon'])
+        return lat, lon
+        modem.close()
+    except:
+        print "!!! get tower location error  !!!"
+        modem.close()
+        sys.exit(1)
 
 #network operator
 def operator(ttyUsbx):
@@ -189,9 +235,9 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
                 mos = mMatcher.findall(out)
                 return mos[0]
             except:
-                print "!!! regex p536 error  !!!"
+                print "!!! regex p563 error  !!!"
         else:
-            print "!!! regex no output error  !!!"
+            print "!!! regex p563 no output error  !!!"
     except:
         print "!!! calculate speech quality error !!!"
         modem.close()

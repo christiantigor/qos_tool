@@ -30,7 +30,7 @@ def main():
         #print listAllUsb
     
         #get largest number of ttyUSBx
-        try:
+sl        try:
             lastChar = listAllUsb[len(listAllUsb)-2]
             largest = int(lastChar)
             #print largest
@@ -78,20 +78,15 @@ def main():
 
     try:
         for modem in listModem:
-            #get tower location
-            lat, lon = qosparam.towerlocation(modem.symlink)
-            print "Tower lat: %s" %lat
-            print "Tower lon: %s" %lon
-                        
             #get network operator
             operator = qosparam.operator(modem.symlink)
             modem.operator = operator
-            print "Operator: %s" %operator
+            #print "Operator: %s" %operator
 
             #get sim card balance
             balance =  qosparam.balance(operator,modem.symlink)
             modem.balance = balance
-            print "Balance: %s" %balance
+            #print "Balance: %s" %balance
 
             #get sms delivery percentage
             #//OK
@@ -112,7 +107,7 @@ def main():
             #get call quality
             sQuality = qosparam.speechquality(operator,modem.stream,modem.symlink)
             modem.sQuality = sQuality
-            print "Voice MOS: %s" %sQuality
+            #print "Voice MOS: %s" %sQuality
 
             #get call success
 
