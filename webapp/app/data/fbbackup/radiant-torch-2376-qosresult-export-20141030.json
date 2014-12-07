@@ -1,0 +1,106 @@
+[ {
+  "balance" : "2100",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "18:41:51"
+}, {
+  "balance" : "2100",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "18:42:54"
+}, {
+  "balance" : "2100",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "18:49:37"
+}, {
+  "balance" : "None",
+  "moscall" : "None",
+  "operator" : "\"XL\"",
+  "sms" : "None",
+  "tddate" : "2014-10-23",
+  "tdtime" : "19:04:00"
+}, {
+  "balance" : "None",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "19:06:29"
+}, {
+  "balance" : "None",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "21:03:26"
+}, {
+  "balance" : "1100",
+  "moscall" : "1.868125",
+  "operator" : "XL",
+  "sms" : "None",
+  "tddate" : "2014-10-23",
+  "tdtime" : "21:15:39"
+}, {
+  "balance" : "1100",
+  "moscall" : "1.811625",
+  "operator" : "XL",
+  "sms" : "None",
+  "tddate" : "2014-10-23",
+  "tdtime" : "21:23:06"
+}, {
+  "balance" : "2001",
+  "moscall" : "1.372970",
+  "operator" : "INDOSAT",
+  "sms" : "None",
+  "tddate" : "2014-10-23",
+  "tdtime" : "21:23:07"
+}, {
+  "balance" : "2100",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "18:41:51"
+}, {
+  "balance" : "2100",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "18:42:54"
+}, {
+  "balance" : "2100",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "18:49:37"
+}, {
+  "balance" : "None",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "19:06:29"
+}, {
+  "balance" : "None",
+  "moscall" : "2.34",
+  "operator" : "\"XL\"",
+  "sms" : "12.30",
+  "tddate" : "2014-10-23",
+  "tdtime" : "21:03:26"
+}, {
+  "balance" : "2001",
+  "moscall" : "1.372970",
+  "operator" : "INDOSAT",
+  "sms" : "None",
+  "tddate" : "2014-10-23",
+  "tdtime" : "21:23:07"
+} ]

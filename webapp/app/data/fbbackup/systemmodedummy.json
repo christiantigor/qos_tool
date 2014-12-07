@@ -1,0 +1,29 @@
+{
+  "Indosat" : {
+    "cdma" : 1,
+    "gsm" : 2,
+    "lte" : 3,
+    "noservice" : 4,
+    "tdscdma" : 5,
+    "wcdma" : 6,
+    "wimax" : 7
+  },
+  "XL" : {
+    "cdma" : 20,
+    "gsm" : 10,
+    "lte" : 9,
+    "noservice" : 0,
+    "tdscdma" : 3,
+    "wcdma" : 5,
+    "wimax" : 7
+  },
+  "Telkomsel" : {
+    "cdma" : 20,
+    "gsm" : 10,
+    "lte" : 9,
+    "noservice" : 0,
+    "tdscdma" : 3,
+    "wcdma" : 5,
+    "wimax" : 7  
+  }
+}

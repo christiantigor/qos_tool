@@ -1,0 +1,179 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+        <!-- build:css({.tmp,app}) styles/main.css -->
+        <link rel="stylesheet" href="styles/bootstrap.css">
+        <!-- <link rel="stylesheet" href="styles/main.css"> -->
+        <!-- endbuild -->
+		
+		<!-- sb-admin-v2 -->
+        <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+        <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+		
+        <!-- <link href="css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"> -->
+        <!-- <link href="css/plugins/timeline/timeline.css" rel="stylesheet"> -->
+		
+		<!-- Page-Level Plugin CSS - Tables -->
+        <!-- <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet"> -->
+		
+        <link href="css/sb-admin.css" rel="stylesheet">
+		<!-- end sb-admin-v2 -->
+		
+		<!-- pagination -->
+		<!-- <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet"> -->
+		<!-- end pagination -->
+		
+		<!-- c3.js -->
+		<link rel="stylesheet" type="text/css" href="bower_components/c3/c3.css">
+		<!-- end c3.js -->
+		
+		<!-- leaflet -->
+		<link rel="stylesheet" href="bower_components/leaflet-dist/leaflet.css" />
+		<!-- end leaflet -->
+		
+		<!-- ngTable -->
+		<!-- <script type="text/javascript" src="bower_components/ng-table/ng-table.css"></script> -->
+		<link rel="stylesheet" href="http://bazalt-cms.com/assets/ng-table/0.3.1/ng-table.css" />
+		<!-- end ngTable -->
+		
+</head>
+  <body ng-app="qostoolApp">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+      <script src="bower_components/es5-shim/es5-shim.js"></script>
+      <script src="bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <!-- <div class="container" ng-view=""></div> -->
+	<div ng-view=""></div>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+
+        <!-- build:js scripts/plugins.js -->
+        <script src="bower_components/sass-bootstrap/js/affix.js"></script>
+        <script src="bower_components/sass-bootstrap/js/alert.js"></script>
+        <script src="bower_components/sass-bootstrap/js/button.js"></script>
+        <script src="bower_components/sass-bootstrap/js/carousel.js"></script>
+        <script src="bower_components/sass-bootstrap/js/transition.js"></script>
+        <script src="bower_components/sass-bootstrap/js/collapse.js"></script>
+        <script src="bower_components/sass-bootstrap/js/dropdown.js"></script>
+        <script src="bower_components/sass-bootstrap/js/modal.js"></script>
+        <script src="bower_components/sass-bootstrap/js/scrollspy.js"></script>
+        <script src="bower_components/sass-bootstrap/js/tab.js"></script>
+        <script src="bower_components/sass-bootstrap/js/tooltip.js"></script>
+        <script src="bower_components/sass-bootstrap/js/popover.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js scripts/modules.js -->
+        <script src="bower_components/angular-resource/angular-resource.js"></script>
+        <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+        <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/app.js"></script>
+        <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/analytics.js"></script>
+        <!-- endbuild -->
+		
+		<!-- angular-bootstrap -->
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+		<!-- end angular-bootstrap -->
+		
+		<!-- sb-admin-v2 -->
+        <!-- <script src="js/jquery-1.10.2.js"></script> -->
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+		
+        <!-- <script src="js/plugins/morris/raphael-2.1.0.min.js"></script>
+        <script src="js/plugins/morris/morris.js"></script> -->
+		
+		<!-- Page-Level Plugin Scripts - Tables -->
+        <script src="js/plugins/dataTables/jquery.dataTables.js"></script>
+        <script src="js/plugins/dataTables/dataTables.bootstrap.js"></script>
+		
+        <script src="js/sb-admin.js"></script>
+		
+        <!-- <script src="js/demo/dashboard-demo.js"></script> -->
+		<!-- end sb-admin-v2 -->
+		
+		<!-- c3.js -->
+		<script src="bower_components/d3/d3.min.js" charset="utf-8"></script>
+		<script src="bower_components/c3/c3.min.js"></script>
+		<!-- end c3.js -->
+		
+		<!-- leaflet -->
+		<script src="bower_components/leaflet-dist/leaflet.js"></script>
+		<script src="bower_components/angular-leaflet/dist/angular-leaflet-directive.js"></script>
+		<!-- end leaflet -->
+		
+		<!-- underscore -->
+		<script src="scripts/underscore-min.js"></script>
+		<!-- end underscore -->
+		
+		<!-- jsPDF -->
+		<script src="scripts/jspdf/angular-local-storage.js"></script>
+		<!-- <script src="scripts/jspdf/app.js"></script> -->
+		<script src="scripts/jspdf/services.js"></script>
+		<script src="scripts/jspdf/controllers.js"></script>
+		<script src="scripts/jspdf/filters.js"></script>
+		<script src="scripts/jspdf/directives.js"></script>
+		<script src="scripts/jspdf/jspdf.min.js" charset="utf-8"></script>
+		<script src="scripts/jspdf/swfobject.js"></script>
+		<script src="scripts/jspdf/downloadify.min.js"></script>
+		<!-- end jsPDF -->
+		
+		<!-- jsPDF addition -->
+		<script src="scripts/jspdf/add/FileSaver.js/FileSaver.js"></script>
+		<script src="scripts/jspdf/add/Blob.js/Blob.js"></script>
+		<script src="scripts/jspdf/add/Blob.js/BlobBuilder.js"></script>
+		
+		<script src="scripts/jspdf/add/Deflate/deflate.js"></script>
+		<script src="scripts/jspdf/add/Deflate/adler32cs.js"></script>
+		
+		<script src="scripts/jspdf/add/jspdf.plugin.addimage.js"></script>
+		<script src="scripts/jspdf/add/jspdf.plugin.from_html.js"></script>
+		<script src="scripts/jspdf/add/jspdf.plugin.ie_below_9_shim.js"></script>
+		<script src="scripts/jspdf/add/jspdf.plugin.sillysvgrenderer.js"></script>
+		<script src="scripts/jspdf/add/jspdf.plugin.split_text_to_size.js"></script>
+		<script src="scripts/jspdf/add/jspdf.plugin.standard_fonts_metrics.js"></script>
+		<!-- end jsPDF addition -->
+		
+		<!-- ngTable -->
+		<script type="text/javascript" src="bower_components/ng-table/ng-table.js"></script>
+		<!-- end ngTable -->
+		
+		<!-- firebase -->
+		<script src="bower_components/firebase/firebase.js"></script>
+		<script src="bower_components/angularfire/dist/angularfire.js"></script>
+		<!-- end firebase -->
+		
+</body>
+</html>
