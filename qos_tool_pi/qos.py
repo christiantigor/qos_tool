@@ -135,7 +135,7 @@ def main():
         time.sleep(1)
 
         #get gps location
-        print "get gps location"
+        #print "get gps location"
         lat, lng = getgps.gpsLocation()
         print "Lat: %s Lon: %s" %(lat,lng)
     except:
@@ -146,10 +146,10 @@ def main():
     try:
         for modem in listModem:
             #get tower location
-            lat, lon = qosparam.towerlocation(modem.symlink)
-            modem.towerLat = lat
-            modem.towerLon = lon
-            print "Tower lat: %s Tower lon: %s" %(lat,lon)
+            tLat, tLon = qosparam.towerlocation(modem.symlink)
+            modem.towerLat = tLat
+            modem.towerLon = tLon
+            print "Tower lat: %s Tower lon: %s" %(tLat,tLon)
             time.sleep(1)
                         
             #get network operator

@@ -50,12 +50,10 @@ def towerlocation(ttyUsbx):
         modem.close()
         return lat, lon
     except:
-        print "!!! get tower location error  !!!"
-        #lat = "0.0"
-        #lon = "0.0"
+        #print "!!! get tower location error  !!!"
         modem.close()
-        #return lat, lon
-        sys.exit(1)
+        return "0.0", "0.0"
+        #sys.exit(1)
 
 #network operator
 def operator(ttyUsbx):
@@ -66,12 +64,13 @@ def operator(ttyUsbx):
         rspn = modem.read(1024)
         pattern = r'"([A-Za-z0-9_]*)"'
         operator = re.search(pattern,rspn)
-        return operator.group()
-        modem.close() 
-    except:
-        print "!!! get network operator error  !!!"
         modem.close()
-        sys.exit(1)
+        return operator.group() 
+    except:
+        #print "!!! get network operator error  !!!"
+        modem.close()
+        return "unknown"
+        #sys.exit(1)
 
 #sim card balance
 def balance(operator,ttyUsbx):
@@ -86,8 +85,9 @@ def balance(operator,ttyUsbx):
             print "operator unknown"
             sys.exit(1)
     except:
-        print "!!! get sim card balance error  !!!"
-        sys.exit(1)
+        #print "!!! get sim card balance error  !!!"
+        return "unknown"
+        #sys.exit(1)
 
 #get rssi
 def rssi(ttyUsbx):
@@ -100,12 +100,13 @@ def rssi(ttyUsbx):
         out = re.findall(pattern,rspn)
         num = int(out[0])
         rssi = -113 + (2*num)
+        modem.close()
         return str(rssi)
-        modem.close()
     except:
-        print "!!! get rssi error  !!!"
+        #print "!!! get rssi error  !!!"
         modem.close()
-        sys.exit(1)
+        return "0"
+        #sys.exit(1)
 
 #get sysmode and submode
 def mode(ttyUsbx):
@@ -118,12 +119,13 @@ def mode(ttyUsbx):
         out = re.findall(pattern,rspn)
         sysmode = out[0]
         submode = out[1]
+        modem.close()
         return sysmode, submode
-        modem.close()
     except:
-        print "!!! get sysmode and submode error  !!!"
+        #print "!!! get sysmode and submode error  !!!"
         modem.close()
-        sys.exit(1)
+        return "unknown","unknown"
+        #sys.exit(1)
 
 #get sms delivery percentage
 def smsdelivery(phoneNum,trial,ttyUsbx):
@@ -285,10 +287,11 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
         else:
             print "!!! regex p563 no output error  !!!"
     except:
-        print "!!! calculate speech quality error !!!"
+        #print "!!! calculate speech quality error !!!"
         modem.close()
         stream.close()
-        sys.exit(1)
+        return "0.0"
+        #sys.exit(1)
 
 #get ping duration
 def pingduration (ttyUsbx):
@@ -322,9 +325,10 @@ def pingduration (ttyUsbx):
             
             ping.terminate()
         except:
-            print "!!! run ping subprocess error  !!!"
+            #print "!!! run ping subprocess error  !!!"
             ping.terminate()
-            sys.exit(1)
+            return "0.0"
+            #sys.exit(1)
     except:
         print "!!! get ping duration error  !!!"
         sys.exit(1)
@@ -363,9 +367,10 @@ def inetspeed (ttyUsbx):
 
             inetspeed.terminate()
         except:
-            print "!!! run inetspeed subprocess error  !!!"
+            #print "!!! run inetspeed subprocess error  !!!"
             inetspeed.terminate()
-            sys.exit(1)
+            return "0.0","0.0"
+            #sys.exit(1)
     except:
         print "!!! get inetspeed error !!!"
         sys.exit(1)
