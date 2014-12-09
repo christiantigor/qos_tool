@@ -2,6 +2,7 @@ import subprocess, time
 import re
 import sys
 import qosparam
+import getgps
 import MySQLdb
 
 #classes
@@ -85,6 +86,63 @@ def main():
         print "!!! get modem's ttyUSBx error !!!"
         sys.exit(1)
 
+    #get location from gps data
+    try:
+        #check what ttyUSB is the gps
+        try:
+            base = "udevadm info --query=symlink --name=ttyUSB"
+            for num in range(0, largest+1):
+                cmd = base + str(num)
+                processUdevGps = subprocess.Popen(
+                    [cmd],
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.PIPE,
+                    shell = True
+                )
+                outUdevGps, errorUdevGps = processUdevGps.communicate()
+
+                try:
+                    if re.search("gps",outUdevGps):
+                        gpsUsb = "ttyUSB"+str(num)
+                    else:
+                        pass
+                except:
+                    print "!!! no gps detected !!!"
+                    sys.exit(1)
+        except subprocess.CalledProcessError:
+            print "!!! get gps' ttyUSBx error  !!!"
+            sys.exit(1)
+
+        #killall gpsd
+        processKillallGpsd = subprocess.Popen(
+            ['sudo killall gpsd'],
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE,
+            shell = True
+        )
+        outKillallGpsd, errorKillallGpsd = processKillallGpsd.communicate()
+        time.sleep(1)
+
+        #activate gpsd
+        #print gpsUsb
+        proActGpsd = subprocess.Popen(
+            ['sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock'],
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE,
+            shell = True
+        )
+        outActGpsd, errorActGpsd = proActGpsd.communicate()
+        time.sleep(1)
+
+        #get gps location
+        print "get gps location"
+        lat, lng = getgps.gpsLocation()
+        print "Lat: %s Lon: %s" %(lat,lng)
+    except:
+        print "!!! get gps location error !!!"
+        sys.exit(1)
+    
+    #get qos parameter
     try:
         for modem in listModem:
             #get tower location

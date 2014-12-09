@@ -16,6 +16,7 @@ class gpsController(threading.Thread):
         global gpsd
         while self.running:
             gpsd.next()
+        return
     def stopController(self):
         self.running = False
 
@@ -26,6 +27,7 @@ def gpsLocation():
     #sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock
     #may need the -b flag
     try:
+        #print "aman"
         gpsc = gpsController()
         try:
             gpsc.start()
@@ -51,12 +53,15 @@ def gpsLocation():
             gpsc.join()
             #print lat
             #print lng
+            lat = round(lat,2)
+            lat = str(lat)
+            lng = round(lng,2)
+            lng = str(lng)
             return lat, lng
         except:
             print "!!! gps get location error !!!"
             gpsc.stopController()
             gpsc.join()
-            sys.exit(1)
     except:
         print "!!! gps controller error !!!"
         sys.exit(1)

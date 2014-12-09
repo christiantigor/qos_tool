@@ -15,6 +15,7 @@ class gpsController(threading.Thread):
         global gpsd
         while self.running:
             gpsd.next()
+        return
     def stopController(self):
         self.running = False
 

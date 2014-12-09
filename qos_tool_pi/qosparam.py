@@ -47,11 +47,14 @@ def towerlocation(ttyUsbx):
         #print o
         lat = str(o[u'lat'])
         lon = str(o[u'lon'])
-        return lat, lon
         modem.close()
+        return lat, lon
     except:
         print "!!! get tower location error  !!!"
+        #lat = "0.0"
+        #lon = "0.0"
         modem.close()
+        #return lat, lon
         sys.exit(1)
 
 #network operator
