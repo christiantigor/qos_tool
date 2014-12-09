@@ -8,17 +8,20 @@ import wave
 def towerlocation(ttyUsbx):
     try:
         p = "/dev/"+ttyUsbx
-        modem = serial.Serial(port=p,baudrate=115200,timeout=0.5,rtscts=0,xonxoff=0)
+        modem = serial.Serial(port=p,baudrate=115200,timeout=5,rtscts=0,xonxoff=0)
         modem.write("AT+CIMI\r")
         rspn = modem.read(1024)
+        #print rspn
         mcc = int(rspn[10]+rspn[11]+rspn[12])
         mnc = int(rspn[13]+rspn[14])
+        time.sleep(1)
         #print mcc
         #print mnc
         modem.write("AT+CREG=2\r")
-        time.sleep(.5)
-        modem.write("AT+CREG?\r")
+        time.sleep(1)
+        modem.write("AT+CREG?\r")#sometimes it returns +CREG: 2,2
         rspn = modem.read(1024)
+        #print rspn
         pattern = re.compile('"\w*"')
         data = pattern.findall(rspn)
         lac = data[0]
@@ -30,7 +33,8 @@ def towerlocation(ttyUsbx):
         #print lac
         #print cid
         payload = {
-            'token': '114087104419',
+            #'token': '114087104419',
+            'token': '103023317794',
             'mcc': mcc,
             'mnc': mnc,
             'cells': [{'cid': cid, 'lac': lac}]
@@ -40,6 +44,7 @@ def towerlocation(ttyUsbx):
                              data=dumps(payload),
                              headers={'content-encoding': 'application/json'})
         o = rspn.json()
+        #print o
         lat = str(o[u'lat'])
         lon = str(o[u'lon'])
         return lat, lon
@@ -79,6 +84,42 @@ def balance(operator,ttyUsbx):
             sys.exit(1)
     except:
         print "!!! get sim card balance error  !!!"
+        sys.exit(1)
+
+#get rssi
+def rssi(ttyUsbx):
+    try:
+        p = "/dev/"+ttyUsbx
+        modem = serial.Serial(port=p,baudrate=115200,timeout=0.5,rtscts=0,xonxoff=0)
+        modem.write("AT+CSQ\r")
+        rspn = modem.read(1024)
+        pattern = r'([0-9]*),'
+        out = re.findall(pattern,rspn)
+        num = int(out[0])
+        rssi = -113 + (2*num)
+        return str(rssi)
+        modem.close()
+    except:
+        print "!!! get rssi error  !!!"
+        modem.close()
+        sys.exit(1)
+
+#get sysmode and submode
+def mode(ttyUsbx):
+    try:
+        p = "/dev/"+ttyUsbx
+        modem = serial.Serial(port=p,baudrate=115200,timeout=0.5,rtscts=0,xonxoff=0)
+        modem.write("AT^SYSINFOEX\r")
+        rspn = modem.read(1024)
+        pattern = r'"([A-Za-z0-9_]*)"'
+        out = re.findall(pattern,rspn)
+        sysmode = out[0]
+        submode = out[1]
+        return sysmode, submode
+        modem.close()
+    except:
+        print "!!! get sysmode and submode error  !!!"
+        modem.close()
         sys.exit(1)
 
 #get sms delivery percentage
@@ -232,8 +273,10 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
         if out:
             try:
                 mMatcher = re.compile("(\d+.\d+)")
-                mos = mMatcher.findall(out)
-                return mos[0]
+                m = mMatcher.findall(out)
+                n = round(float(m[0]),2)
+                mos = str(n)
+                return mos
             except:
                 print "!!! regex p563 error  !!!"
         else:
@@ -242,4 +285,84 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
         print "!!! calculate speech quality error !!!"
         modem.close()
         stream.close()
+        sys.exit(1)
+
+#get ping duration
+def pingduration (ttyUsbx):
+    try:
+        #run wvdial (IMPORTANT TO IMPLEMENT)
+        #run ping subprocess
+        try:
+            host = "www.google.com"
+            cmd = "ping -c 4 " + host
+            ping = subprocess.Popen(
+                [cmd],
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE,
+                shell = True
+            )
+
+            out, error = ping.communicate()
+
+            if out:
+                try:
+                    matcher = re.compile("rtt min/avg/max/mdev = (\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
+                    matched = matcher.findall(out)
+                    avg = matched[0][1]
+                    return avg
+                except:
+                    print "!!! regex ping error  !!!"
+                    ping.terminate()
+            else:
+                print "!!! regex ping no output error  !!!"
+                ping.terminate()
+            
+            ping.terminate()
+        except:
+            print "!!! run ping subprocess error  !!!"
+            ping.terminate()
+            sys.exit(1)
+    except:
+        print "!!! get ping duration error  !!!"
+        sys.exit(1)
+
+#get download and upload speed
+def inetspeed (ttyUsbx):
+    try:
+        #run wvdial (IMPORTANT TO IMPLEMENT)
+        #run inetspeed subprocess
+        try:
+            cmd = "speedtest-cli"
+            inetspeed = subprocess.Popen(
+                [cmd],
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE,
+                shell = True
+            )
+
+            out, error = inetspeed.communicate()
+
+            if out:
+                try:
+                    dmatcher = re.compile("Download: (\d+.\d+)")
+                    umatcher = re.compile("Upload: (\d+.\d+)")
+                    dload = dmatcher.findall(out)
+                    uload = umatcher.findall(out)
+                    download = dload[0]
+                    upload = uload[0]
+                    return download, upload
+                except:
+                    print "!!! regex inetspeed error  !!!"
+                    inetspeed.terminate()
+            else:
+                print "!!! regex inetspeed no output error !!!"
+                inetspeed.terminate()
+
+            inetspeed.terminate()
+        except:
+            print "!!! run inetspeed subprocess error  !!!"
+            inetspeed.terminate()
+            sys.exit(1)
+    except:
+        print "!!! get inetspeed error !!!"
         sys.exit(1)
