@@ -2,8 +2,10 @@ import subprocess, time
 import re
 import sys
 import qosparam
-import getgps
 import MySQLdb
+from gps import *
+import threading
+import math
 
 #classes
 class mdm:
@@ -23,6 +25,119 @@ class mdm:
         self.dload = None
         self.uload = None
 
+gpsd = None
+class gpsController(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        global gpsd
+        gpsd = gps(mode=WATCH_ENABLE)
+        self.running = False
+    def run(self):
+        self.running = True
+        global gpsd
+        while self.running:
+            gpsd.next()
+        return #need return for killing thread
+    def stopController(self):
+        self.running = False
+
+#additional function
+def gpsInit():
+    #list all USB device
+    try:
+        processAllUsb = subprocess.Popen(
+            ["ls /dev/ttyUSB*"],
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE,
+            shell = True
+        )
+        listAllUsb, errorAllUsb = processAllUsb.communicate()
+
+        try:
+            lastChar = listAllUsb[len(listAllUsb)-2]
+            largest = int(lastChar)
+            #print largest
+        except:
+            print "!!! gpsInit - last char is not a number, may indicate no gps !!!"
+            sys.exit(1)
+    except subprocess.CalledProcessError:
+        print "!!! gpsInit - list all USB error !!!"
+        sys.exit(1)
+
+    #check what ttyUSB is the gps
+    try:
+        base = "udevadm info --query=symlink --name=ttyUSB"
+        for num in range(0, largest+1):
+            cmd = base + str(num)
+            processUdevGps = subprocess.Popen(
+                [cmd],
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE,
+                shell = True
+            )
+            outUdevGps, errorUdevGps = processUdevGps.communicate()
+            try:
+                if re.search("gps",outUdevGps):
+                    gpsUsb = "ttyUSB"+str(num)
+                else:
+                    pass
+            except:
+                print "!!! gpsInit - no gps detected !!!"
+                sys.exit(1)
+    except subprocess.CalledProcessError:
+        print "!!! gpsInit - get gps ttyUSBx error !!!"
+        sys.exit(1)
+
+    #killall gpsd
+    try:
+        processKillallGpsd = subprocess.Popen(
+            ['sudo killall gpsd'],
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE,
+            shell = True
+        )
+        outKillallGpsd, errorKillallGpsd = processKillallGpsd.communicate()
+        time.sleep(1)
+    except subprocess.CalledProcessError:
+        print "!!! gpsInit - killall gpsd error !!!"
+        sys.exit(1)
+    #activate gpsd
+    try:
+        #print gpsUsb
+        cmd = "sudo gpsd /dev/" + gpsUsb + " -F /var/run/gpsd.sock"
+        #print cmd
+        proActGpsd = subprocess.Popen(
+            [cmd],
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE,
+            shell = True
+        )
+        outActGpsd, errorActGpsd = proActGpsd.communicate()
+        time.sleep(1)
+    except subprocess.CalledProcessError:
+        print "!!! gpsInit - activate gpsd error !!!"
+
+def validateLoc(tmpLat, tmpLng):
+    if(type(tmpLat) is float and not math.isnan(tmpLat) and type(tmpLng) is float and not math.isnan(tmpLng)):
+        if(tmpLat!=0.0 and tmpLng!=0.0):
+            #print "gps data is float and not nan and not zero"
+            lat = tmpLat
+            lng = tmpLng
+        else:
+            #print "gps data is float"
+            lat = 0.0
+            lng = 0.0
+    else:
+        #print "gps data is nan"
+        lat = 0.0
+        lng = 0.0
+    lat = round(lat,2)
+    lat = str(lat)
+    lng = round(lng,2)
+    lng = str(lng)
+    return lat, lng
+
+#main function
 def main():
     listModem = []
 
@@ -44,7 +159,7 @@ def main():
             largest = int(lastChar)
             #print largest
         except:
-            print "!!! last char is not a number - may indicate there is no usb device !!!"
+            print "!!! last char is not a number, may indicate no usb device !!!"
             sys.exit(1)
             
 
@@ -84,62 +199,6 @@ def main():
 
     except subprocess.CalledProcessError:
         print "!!! get modem's ttyUSBx error !!!"
-        sys.exit(1)
-
-    #get location from gps data
-    try:
-        #check what ttyUSB is the gps
-        try:
-            base = "udevadm info --query=symlink --name=ttyUSB"
-            for num in range(0, largest+1):
-                cmd = base + str(num)
-                processUdevGps = subprocess.Popen(
-                    [cmd],
-                    stdout = subprocess.PIPE,
-                    stderr = subprocess.PIPE,
-                    shell = True
-                )
-                outUdevGps, errorUdevGps = processUdevGps.communicate()
-
-                try:
-                    if re.search("gps",outUdevGps):
-                        gpsUsb = "ttyUSB"+str(num)
-                    else:
-                        pass
-                except:
-                    print "!!! no gps detected !!!"
-                    sys.exit(1)
-        except subprocess.CalledProcessError:
-            print "!!! get gps' ttyUSBx error  !!!"
-            sys.exit(1)
-
-        #killall gpsd
-        processKillallGpsd = subprocess.Popen(
-            ['sudo killall gpsd'],
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE,
-            shell = True
-        )
-        outKillallGpsd, errorKillallGpsd = processKillallGpsd.communicate()
-        time.sleep(1)
-
-        #activate gpsd
-        #print gpsUsb
-        proActGpsd = subprocess.Popen(
-            ['sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock'],
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE,
-            shell = True
-        )
-        outActGpsd, errorActGpsd = proActGpsd.communicate()
-        time.sleep(1)
-
-        #get gps location
-        #print "get gps location"
-        lat, lng = getgps.gpsLocation()
-        print "Lat: %s Lon: %s" %(lat,lng)
-    except:
-        print "!!! get gps location error !!!"
         sys.exit(1)
     
     #get qos parameter
@@ -239,4 +298,21 @@ def main():
         sys.exit(1)
 
 if __name__ == '__main__':
-    main()
+    try:
+        gpsInit()
+    except:
+        print "init app error"
+        sys.exit(1)
+    gpsc = gpsController()
+    try:
+        gpsc.start()
+        while True:
+            lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
+            print lat
+            print lng
+            #main()
+            time.sleep(5)
+    except(KeyboardInterrupt, SystemExit):
+        print "killing gps thread thus kill app too"
+        gpsc.stopController()
+        gpsc.join()

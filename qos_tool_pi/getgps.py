@@ -67,10 +67,10 @@ def gpsLocation():
         sys.exit(1)
 
 #start for testing purpose
-#if __name__ == '__main__':
-#    latitude, longitude = gpsLocation()
-#    print latitude
-#    print longitude
-#    time.sleep(1)
-#    sys.exit(1)
+if __name__ == '__main__':
+    latitude, longitude = gpsLocation()
+    print latitude
+    print longitude
+    time.sleep(1)
+    sys.exit(1)
 #end for testing purpose
