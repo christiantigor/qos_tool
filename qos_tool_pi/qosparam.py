@@ -50,9 +50,9 @@ def towerlocation(ttyUsbx):
         modem.close()
         return lat, lon
     except:
-        #print "!!! get tower location error  !!!"
+        print "!!! get tower location error  !!!"
         modem.close()
-        return "0.0", "0.0"
+        return "None", "None"
         #sys.exit(1)
 
 #network operator
@@ -67,9 +67,9 @@ def operator(ttyUsbx):
         modem.close()
         return operator.group() 
     except:
-        #print "!!! get network operator error  !!!"
+        #print "!!! get network operator error !!!"
         modem.close()
-        return "unknown"
+        return '"None"'
         #sys.exit(1)
 
 #sim card balance
@@ -82,11 +82,12 @@ def balance(operator,ttyUsbx):
         elif operator == '"INDOSAT"':
             return simbalance.indosatBalance(ttyUsbx)
         else:
-            print "operator unknown"
-            sys.exit(1)
+            #print "operator unknown"
+            return "None"
+            #sys.exit(1)
     except:
         #print "!!! get sim card balance error  !!!"
-        return "unknown"
+        return "None"
         #sys.exit(1)
 
 #get rssi
@@ -203,10 +204,11 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
         modem = serial.Serial(port=pM,baudrate=115200,timeout=1,rtscts=0,xonxoff=0)
         stream = serial.Serial(port=pS,baudrate=115200,timeout=1,rtscts=0,xonxoff=0)
     except:
-        print"!!! init speech quality error  !!!"
+        #print"!!! init speech quality error  !!!"
         modem.close()
         stream.close()
-        sys.exit(1)
+        #sys.exit(1)
+        pass
 
     #call IVR
     try:
@@ -227,10 +229,11 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
         time.sleep(3)
         modem.close()
     except:
-        print"!!! call IVR error  !!!"
+        #print"!!! call IVR error  !!!"
         modem.close()
         stream.close()
-        sys.exit(1)
+        pass
+        #sys.exit(1)
         
     #record response
     try:
@@ -242,10 +245,11 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
             frames.append(data)
         stream.close()
     except:
-        print "!!! record IVR response error  !!!"
+        #print "!!! record IVR response error  !!!"
         modem.close()
         stream.close()
-        sys.exit(1)
+        pass
+        #sys.exit(1)
     
     #save to file
     try:
@@ -257,10 +261,11 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
         wf.writeframes(b''.join(frames))
         wf.close()
     except:
-        print "!!! save to file error  !!!"
+        #print "!!! save to file error  !!!"
         modem.close()
         stream.close()
-        sys.exit(1)
+        pass
+        #sys.exit(1)
         
     #calculate speech quality using P.536 algoritm
     try:
@@ -283,15 +288,28 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
                 mos = str(n)
                 return mos
             except:
-                print "!!! regex p563 error  !!!"
+                #print "!!! regex p563 error  !!!"
+                pass
         else:
-            print "!!! regex p563 no output error  !!!"
+            #print "!!! regex p563 no output error  !!!"
+            return "None"
     except:
         #print "!!! calculate speech quality error !!!"
         modem.close()
         stream.close()
-        return "0.0"
+        return "None"
         #sys.exit(1)
+
+#internet quality
+def inetquality (ttyUsbx):
+    try:
+        #run wvdial subprocess
+        #run ping subprocess
+        #run inet speed subprocess
+        pass
+    except:
+        print "!!! get inet quality error !!!"
+        sys.exit(1)
 
 #get ping duration
 def pingduration (ttyUsbx):
@@ -317,21 +335,21 @@ def pingduration (ttyUsbx):
                     avg = matched[0][1]
                     return avg
                 except:
-                    print "!!! regex ping error  !!!"
+                    #print "!!! regex ping error  !!!"
                     ping.terminate()
             else:
-                print "!!! regex ping no output error  !!!"
+                #print "!!! regex ping no output error  !!!"
                 ping.terminate()
-            
+                return "0.0"
             ping.terminate()
         except:
             #print "!!! run ping subprocess error  !!!"
             ping.terminate()
-            return "0.0"
             #sys.exit(1)
     except:
-        print "!!! get ping duration error  !!!"
-        sys.exit(1)
+        #print "!!! get ping duration error  !!!"
+        return "0.0"
+        #sys.exit(1)
 
 #get download and upload speed
 def inetspeed (ttyUsbx):

@@ -121,20 +121,16 @@ def validateLoc(tmpLat, tmpLng):
     if(type(tmpLat) is float and not math.isnan(tmpLat) and type(tmpLng) is float and not math.isnan(tmpLng)):
         if(tmpLat!=0.0 and tmpLng!=0.0):
             #print "gps data is float and not nan and not zero"
-            lat = tmpLat
-            lng = tmpLng
+            lat = str(tmpLat) #convert to string
+            lng = str(tmpLng) #convert to string
         else:
             #print "gps data is float"
-            lat = 0.0
-            lng = 0.0
+            lat = "None"
+            lng = "None"
     else:
         #print "gps data is nan"
-        lat = 0.0
-        lng = 0.0
-    lat = round(lat,2)
-    lat = str(lat)
-    lng = round(lng,2)
-    lng = str(lng)
+        lat = "None"
+        lng = "None"
     return lat, lng
 
 #main function
@@ -205,11 +201,11 @@ def main():
     try:
         for modem in listModem:
             #get tower location
-            tLat, tLon = qosparam.towerlocation(modem.symlink)
-            modem.towerLat = tLat
-            modem.towerLon = tLon
-            print "Tower lat: %s Tower lon: %s" %(tLat,tLon)
-            time.sleep(1)
+            #tLat, tLon = qosparam.towerlocation(modem.symlink)
+            #modem.towerLat = tLat
+            #modem.towerLon = tLon
+            #print "Tower lat: %s Tower lon: %s" %(tLat,tLon)
+            #time.sleep(1)
                         
             #get network operator
             operator = qosparam.operator(modem.symlink)
@@ -255,7 +251,7 @@ def main():
             #get call quality
             sQuality = qosparam.speechquality(operator,modem.stream,modem.symlink)
             modem.sQuality = sQuality
-            print "Voice MOS: %s" %sQuality
+            print "MOS: %s" %sQuality
             time.sleep(1)
 
             #get call success (do not implement yet)
@@ -267,10 +263,10 @@ def main():
             time.sleep(1)
 
             #get download and upload speed
-            dload, uload = qosparam.inetspeed(modem.symlink)
-            modem.dload = dload
-            modem.uload = uload
-            print "download: %s Mbits/s upload: %s Mbits/s" %(dload,uload)
+            #dload, uload = qosparam.inetspeed(modem.symlink)
+            #modem.dload = dload
+            #modem.uload = uload
+            #print "download: %s Mbits/s upload: %s Mbits/s" %(dload,uload)
 
     except:
         print "!!! problems in get parameter !!!"
@@ -298,6 +294,7 @@ def main():
         sys.exit(1)
 
 if __name__ == '__main__':
+    time.sleep(10) #sleep after booting up
     try:
         gpsInit()
     except:
@@ -308,10 +305,10 @@ if __name__ == '__main__':
         gpsc.start()
         while True:
             lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
-            print lat
-            print lng
-            #main()
-            time.sleep(5)
+            print "Loc lat: %s Loc lng: %s" %(lat,lng)
+            main()
+            print "\r\n"
+            time.sleep(2)
     except(KeyboardInterrupt, SystemExit):
         print "killing gps thread thus kill app too"
         gpsc.stopController()
