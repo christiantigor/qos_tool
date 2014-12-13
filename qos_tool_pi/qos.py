@@ -256,17 +256,14 @@ def main():
 
             #get call success (do not implement yet)
 
-            #get ping duration
-            ping = qosparam.pingduration(modem.symlink)
+            #get internet quality
+            ping, dload, uload = qosparam.inetquality(modem.operator,modem.symlink)
             modem.ping = ping
+            modem.dload = dload
+            modem.uload = uload
             print "Ping duration: %s ms" %ping
+            print "dload: %s Mbits/s uload: %s Mbits/s" %(dload,uload)
             time.sleep(1)
-
-            #get download and upload speed
-            #dload, uload = qosparam.inetspeed(modem.symlink)
-            #modem.dload = dload
-            #modem.uload = uload
-            #print "download: %s Mbits/s upload: %s Mbits/s" %(dload,uload)
 
     except:
         print "!!! problems in get parameter !!!"
@@ -294,22 +291,22 @@ def main():
         sys.exit(1)
 
 if __name__ == '__main__':
-    time.sleep(10) #sleep after booting up
+#    time.sleep(10) #sleep after booting up
+#    try:
+#        gpsInit()
+#    except:
+#        print "init app error"
+#        sys.exit(1)
+#    gpsc = gpsController()
     try:
-        gpsInit()
-    except:
-        print "init app error"
-        sys.exit(1)
-    gpsc = gpsController()
-    try:
-        gpsc.start()
+#        gpsc.start()
         while True:
-            lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
-            print "Loc lat: %s Loc lng: %s" %(lat,lng)
+#            lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
+#            print "Loc lat: %s Loc lng: %s" %(lat,lng)
             main()
             print "\r\n"
             time.sleep(2)
     except(KeyboardInterrupt, SystemExit):
         print "killing gps thread thus kill app too"
-        gpsc.stopController()
-        gpsc.join()
+#        gpsc.stopController()
+#        gpsc.join()

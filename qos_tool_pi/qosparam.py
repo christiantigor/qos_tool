@@ -300,21 +300,9 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
         return "None"
         #sys.exit(1)
 
-#internet quality
-def inetquality (ttyUsbx):
+#get ping duration - used on internet quality (see below)
+def pingduration ():
     try:
-        #run wvdial subprocess
-        #run ping subprocess
-        #run inet speed subprocess
-        pass
-    except:
-        print "!!! get inet quality error !!!"
-        sys.exit(1)
-
-#get ping duration
-def pingduration (ttyUsbx):
-    try:
-        #run wvdial (IMPORTANT TO IMPLEMENT)
         #run ping subprocess
         try:
             host = "74.125.68.113" #this is google.com ip
@@ -351,10 +339,9 @@ def pingduration (ttyUsbx):
         return "0.0"
         #sys.exit(1)
 
-#get download and upload speed
-def inetspeed (ttyUsbx):
+#get dload and uload speed - used on internet quality (see below)
+def inetspeed ():
     try:
-        #run wvdial (IMPORTANT TO IMPLEMENT)
         #run inetspeed subprocess
         try:
             #cmd = "speedtest-cli"
@@ -393,3 +380,40 @@ def inetspeed (ttyUsbx):
     except:
         print "!!! get inetspeed error !!!"
         sys.exit(1)
+
+#internet quality
+def inetquality (operator,ttyUsbx):
+    try:
+        #get parameter for wvdial
+        if operator == '"XL"':
+            op = 'xl'
+        elif operator == '"TELKOMSEL"':
+            op = 'telkomsel'
+        elif operator == '"INDOSAT"':
+            op = 'indosat'
+        else:
+            #print "operator unknown"
+            #sys.exit(1)
+            return "None", "None", "None"
+        #run wvdial
+        cmd = "sudo wvdial " + op + " " + ttyUsbx + " &"
+        subprocess.Popen([cmd], shell = True)
+        time.sleep(10)
+        #set default route
+        subprocess.Popen(['sudo route add default ppp0'], shell = True)
+        #run pingduration process
+        rsltPing = pingduration()
+        #print "Ping: %s ms" % rsltPing
+        time.sleep(1)
+        #run inetspeed process
+        rsltDload, rsltUload = inetspeed()
+        #print "Dload: %s Mbits/s - Uload: %s Mbits/s" % (rsltDload,rsltUload)
+        #stop wvdial
+        cmd = "sudo poff.wvdial " + op + " " + ttyUsbx
+        subprocess.Popen([cmd], shell = True)
+        time.sleep(10)
+        return rsltPing, rsltDload, rsltUload
+    except:
+        #print "!!! get inet quality error !!!"
+        #sys.exit(1)
+        return "None", "None", "None"
