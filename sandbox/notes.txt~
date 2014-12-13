@@ -146,3 +146,14 @@ MySQL Local Database
 Important command:
 - change column data type: http://stackoverflow.com/questions/1356866/how-do-i-change-the-data-type-for-a-column-in-mysql
 - insert column after other column: http://blog.sqlauthority.com/2013/03/11/sql-server-how-to-add-column-at-specific-location-in-table/
+
++++++++++++++
+11 Dec 2014
++++++++++++++
+Internet connection via USB modem on RPi
+- Configure wvdial.conf in /etc/wvdial.conf for each of operator
+- Run 'sudo wvdial xl' for example
+- Run 'netstat -rn' to see default route
+- Run 'sudo route del default gw 192.168.2.1'
+- Run 'sudo route add default ppp0', so rpi knows to use modem instead of eth for internet
+- Run 'sudo killall pppd' to close all pppd thread

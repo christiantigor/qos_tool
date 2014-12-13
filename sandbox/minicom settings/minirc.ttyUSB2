@@ -1,0 +1,4 @@
+# Machine-generated file - use "minicom -s" to change parameters.
+pu port             /dev/ttyUSB2
+pu rtscts           No 
+pu localecho        Yes

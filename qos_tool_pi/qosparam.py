@@ -317,7 +317,7 @@ def pingduration (ttyUsbx):
         #run wvdial (IMPORTANT TO IMPLEMENT)
         #run ping subprocess
         try:
-            host = "www.google.com"
+            host = "74.125.68.113" #this is google.com ip
             cmd = "ping -c 4 " + host
             ping = subprocess.Popen(
                 [cmd],
@@ -357,7 +357,8 @@ def inetspeed (ttyUsbx):
         #run wvdial (IMPORTANT TO IMPLEMENT)
         #run inetspeed subprocess
         try:
-            cmd = "speedtest-cli"
+            #cmd = "speedtest-cli"
+            cmd = "python speedtest-cli-qos"
             inetspeed = subprocess.Popen(
                 [cmd],
                 stdout = subprocess.PIPE,
