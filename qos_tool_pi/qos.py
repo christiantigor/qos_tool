@@ -6,6 +6,7 @@ import MySQLdb
 from gps import *
 import threading
 import math
+import senddata
 
 #classes
 class mdm:
@@ -134,8 +135,8 @@ def validateLoc(tmpLat, tmpLng):
     return lat, lng
 
 #main function
-def main():
-    listModem = []
+def main(latitude,longitude):
+    #listModem = []
 
     #list all USB device
     try:
@@ -214,7 +215,7 @@ def main():
             time.sleep(1)
 
             #get sim card balance
-            balance = qosparam.balance(operator,modem.symlink)
+            balance = qosparam.balance(modem.operator,modem.symlink)
             modem.balance = balance
             print "Balance: %s" %balance
             time.sleep(1)
@@ -249,7 +250,7 @@ def main():
                 #print '[%s]SMS:%d sent, %.2f%% has delivery report' % (operator,trial,perc)
 
             #get call quality
-            sQuality = qosparam.speechquality(operator,modem.stream,modem.symlink)
+            sQuality = qosparam.speechquality(modem.operator,modem.stream,modem.symlink)
             modem.sQuality = sQuality
             print "MOS: %s" %sQuality
             time.sleep(1)
@@ -266,8 +267,8 @@ def main():
             time.sleep(1)
 
     except:
-        print "!!! problems in get parameter !!!"
-        sys.exit(1)
+        print "!!! get qos parameter error !!!"
+        #sys.exit(1)
 
     #put data to database
     try:
@@ -277,9 +278,9 @@ def main():
         #use python context manager for automatic rollback
 
         for m in listModem:
-            cmd = ('INSERT INTO testresult VALUES (NULL,CURRENT_DATE(),NOW(),"'+str(m.towerLat)+'","'+str(m.towerLon)+'",'+str(m.operator)+
+            cmd = ('INSERT INTO testresult VALUES (NULL,CURRENT_DATE(),NOW(),"'+str(latitude)+'","'+str(longitude)+'",'+str(m.operator)+
                    ',"'+str(m.balance)+'","'+str(m.rssi)+'","'+str(m.sysmode)+'","'+str(m.submode)+'","'+str(m.smsPerc)+
-                   '","'+str(m.sQuality)+'","'+str(m.ping)+'","'+str(m.dload)+'","'+str(m.uload)+'","no"'+')'
+                   '","'+str(m.sQuality)+'","'+str(m.ping)+'","'+str(m.dload)+'","'+str(m.uload)+'","new"'+')'
                   )
             print cmd
             with db:
@@ -291,22 +292,32 @@ def main():
         sys.exit(1)
 
 if __name__ == '__main__':
-#    time.sleep(10) #sleep after booting up
-#    try:
-#        gpsInit()
-#    except:
-#        print "init app error"
-#        sys.exit(1)
-#    gpsc = gpsController()
+    time.sleep(10) #sleep after booting up
     try:
-#        gpsc.start()
+        gpsInit()
+    except:
+        print "init app error"
+        sys.exit(1)
+    gpsc = gpsController()
+    try:
+        gpsc.start()
         while True:
-#            lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
-#            print "Loc lat: %s Loc lng: %s" %(lat,lng)
-            main()
-            print "\r\n"
-            time.sleep(2)
+            #collect data
+            for _ in range(1): #how many of data collection is done before sent to cloud
+                lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
+                print "GPS - Loc lat: %s Loc lng: %s\r\n" %(lat,lng)
+                listModem = []
+                main(lat,lng)
+                print "\r\n"
+                time.sleep(2)
+            #filter new and valid data (future feature)
+            #send data to cloud
+            print "send data to cloud"
+            op = listModem[0].operator
+            ttyUsb = listModem[0].symlink
+            senddata.sendingdata(op,ttyUsb)
+            
     except(KeyboardInterrupt, SystemExit):
         print "killing gps thread thus kill app too"
-#        gpsc.stopController()
-#        gpsc.join()
+        gpsc.stopController()
+        gpsc.join()
