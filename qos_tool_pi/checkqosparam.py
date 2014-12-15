@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import subprocess, time
 import re
 import sys
@@ -8,7 +6,6 @@ import MySQLdb
 from gps import *
 import threading
 import math
-import senddata
 
 #classes
 class mdm:
@@ -28,130 +25,21 @@ class mdm:
         self.dload = None
         self.uload = None
 
-gpsd = None
-class gpsController(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        global gpsd
-        gpsd = gps(mode=WATCH_ENABLE)
-        self.running = False
-    def run(self):
-        self.running = True
-        global gpsd
-        while self.running:
-            gpsd.next()
-        return #need return for killing thread
-    def stopController(self):
-        self.running = False
-
-#additional function
-def gpsInit():
-    #list all USB device
-    try:
-        processAllUsb = subprocess.Popen(
-            ["ls /dev/ttyUSB*"],
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE,
-            shell = True
-        )
-        listAllUsb, errorAllUsb = processAllUsb.communicate()
-
-        try:
-            lastChar = listAllUsb[len(listAllUsb)-2]
-            largest = int(lastChar)
-            #print largest
-        except:
-            print "!!! gpsInit - last char is not a number, may indicate no gps !!!"
-            sys.exit(1)
-    except subprocess.CalledProcessError:
-        print "!!! gpsInit - list all USB error !!!"
-        sys.exit(1)
-
-    #check what ttyUSB is the gps
-    try:
-        base = "sudo udevadm info --query=symlink --name=ttyUSB"
-        for num in range(0, largest+1):
-            cmd = base + str(num)
-            processUdevGps = subprocess.Popen(
-                [cmd],
-                stdout = subprocess.PIPE,
-                stderr = subprocess.PIPE,
-                shell = True
-            )
-            outUdevGps, errorUdevGps = processUdevGps.communicate()
-            try:
-                if re.search("gps",outUdevGps):
-                    gpsUsb = "ttyUSB"+str(num)
-                else:
-                    pass
-            except:
-                print "!!! gpsInit - no gps detected !!!"
-                sys.exit(1)
-    except subprocess.CalledProcessError:
-        print "!!! gpsInit - get gps ttyUSBx error !!!"
-        sys.exit(1)
-
-    #killall gpsd
-    try:
-        processKillallGpsd = subprocess.Popen(
-            ['sudo killall gpsd'],
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE,
-            shell = True
-        )
-        outKillallGpsd, errorKillallGpsd = processKillallGpsd.communicate()
-        time.sleep(1)
-    except subprocess.CalledProcessError:
-        print "!!! gpsInit - killall gpsd error !!!"
-        sys.exit(1)
-    #activate gpsd
-    try:
-        #print gpsUsb
-        cmd = "sudo gpsd /dev/" + gpsUsb + " -F /var/run/gpsd.sock"
-        #print cmd
-        proActGpsd = subprocess.Popen(
-            [cmd],
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE,
-            shell = True
-        )
-        outActGpsd, errorActGpsd = proActGpsd.communicate()
-        time.sleep(1)
-    except subprocess.CalledProcessError:
-        print "!!! gpsInit - activate gpsd error !!!"
-
-def validateLoc(tmpLat, tmpLng):
-    if(type(tmpLat) is float and not math.isnan(tmpLat) and type(tmpLng) is float and not math.isnan(tmpLng)):
-        if(tmpLat!=0.0 and tmpLng!=0.0):
-            #print "gps data is float and not nan and not zero"
-            lat = str(tmpLat) #convert to string
-            lng = str(tmpLng) #convert to string
-        else:
-            #print "gps data is float"
-            lat = "None"
-            lng = "None"
-    else:
-        #print "gps data is nan"
-        lat = "None"
-        lng = "None"
-    return lat, lng
-
-#main function
-def main(latitude,longitude):
-    #listModem = []
-
-    #list all USB device
-    try:
-        processAllUsb = subprocess.Popen(
-            ["ls /dev/ttyUSB*"],
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE,
-            shell = True
-        )
+def qosmain():
+    listModem = []
     
+    #list all USB device
+    try:
+        processAllUsb = subprocess.Popen(
+            ["ls /dev/ttyUSB*"],
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE,
+            shell = True
+        )
+
         listAllUsb, errorAllUsb = processAllUsb.communicate()
         #print listAllUsb
-    
+
         #get largest number of ttyUSBx
         try:
             lastChar = listAllUsb[len(listAllUsb)-2]
@@ -160,7 +48,7 @@ def main(latitude,longitude):
         except:
             print "!!! last char is not a number, may indicate no usb device !!!"
             sys.exit(1)
-            
+
 
     except subprocess.CalledProcessError:
         print "!!! list all USB error !!!"
@@ -181,6 +69,7 @@ def main(latitude,longitude):
             )
 
             outUdevadm, errorUdevadm = processUdevadm.communicate()
+            #print outUdevadm
 
             try:
                 if re.search("gsmmodem",outUdevadm):
@@ -199,7 +88,7 @@ def main(latitude,longitude):
     except subprocess.CalledProcessError:
         print "!!! get modem's ttyUSBx error !!!"
         sys.exit(1)
-    
+
     #get qos parameter
     try:
         for modem in listModem:
@@ -209,31 +98,31 @@ def main(latitude,longitude):
             #modem.towerLon = tLon
             #print "Tower lat: %s Tower lon: %s" %(tLat,tLon)
             #time.sleep(1)
-                        
-            #get network operator
+
+            #get network operator - ok, can be put to db
             operator = qosparam.operator(modem.symlink)
             modem.operator = operator
             print "Operator: %s" %operator
-            time.sleep(1)
+            time.sleep(.2)
 
-            #get sim card balance
+            #get sim card balance - ok, can be put to db
             balance = qosparam.balance(modem.operator,modem.symlink)
             modem.balance = balance
             print "Balance: %s" %balance
-            time.sleep(1)
+            time.sleep(.2)
 
-            #get rssi
+            #get rssi - ok, can be put to db
             rssi = qosparam.rssi(modem.symlink)
             modem.rssi = rssi
             print "RSSI: %s dBm" %rssi
-            time.sleep(1)
+            time.sleep(.2)
 
-            #get sysmode and submode
+            #get sysmode and submode - ok, can be put to db
             sysmode, submode = qosparam.mode(modem.symlink)
             modem.sysmode = sysmode
             modem.submode = submode
             print "Sysmode: %s Submode: %s" % (sysmode,submode)
-            time.sleep(1)
+            time.sleep(.2)
 
             #get sms delivery percentage
             #//OK
@@ -251,22 +140,22 @@ def main(latitude,longitude):
                 #perc = ocr / float(trial) * 100
                 #print '[%s]SMS:%d sent, %.2f%% has delivery report' % (operator,trial,perc)
 
-            #get call quality
+            #get call quality - not fully ok, indosat cannot get value and telkomsel value is 1.0
             sQuality = qosparam.speechquality(modem.operator,modem.stream,modem.symlink)
             modem.sQuality = sQuality
             print "MOS: %s" %sQuality
-            time.sleep(1)
+            time.sleep(.5)
 
             #get call success (do not implement yet)
 
-            #get internet quality
+            #get internet quality - ok, can be put to db
             ping, dload, uload = qosparam.inetquality(modem.operator,modem.symlink)
             modem.ping = ping
             modem.dload = dload
             modem.uload = uload
             print "Ping duration: %s ms" %ping
             print "dload: %s Mbits/s uload: %s Mbits/s" %(dload,uload)
-            time.sleep(1)
+            time.sleep(.5)
 
     except:
         print "!!! get qos parameter error !!!"
@@ -276,8 +165,10 @@ def main(latitude,longitude):
     try:
         db = MySQLdb.connect("localhost","monitor","password","qostool")
         curs = db.cursor()
-        
+
         #use python context manager for automatic rollback
+        latitude = "None"
+        longitude = "None"
 
         for m in listModem:
             cmd = ('INSERT INTO testresult VALUES (NULL,CURRENT_DATE(),NOW(),"'+str(latitude)+'","'+str(longitude)+'",'+str(m.operator)+
@@ -293,35 +184,3 @@ def main(latitude,longitude):
         db.close()
         sys.exit(1)
 
-if __name__ == '__main__':
-#    time.sleep(20) #sleep after booting up
-#    try:
-#        gpsInit()
-#    except:
-#        print "init app error"
-#        sys.exit(1)
-#    gpsc = gpsController()
-    try:
-#        gpsc.start()
-        while True:
-            #collect data
-            for _ in range(2): #how many of data collection is done before sent to cloud
-#                lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
-#                print "GPS - Loc lat: %s Loc lng: %s\r\n" %(lat,lng)
-                listModem = []
-                lat = "None" #delete
-                lng = "None" #delete
-                main(lat,lng)
-                print "\r\n"
-                time.sleep(2)
-            #filter new and valid data (future feature)
-            #send data to cloud
-            print "send data to cloud"
-#            op = listModem[0].operator
-#            ttyUsb = listModem[0].symlink
-#            senddata.sendingdata(op,ttyUsb)
-            
-    except(KeyboardInterrupt, SystemExit):
-        print "killing gps thread thus kill app too"
-#        gpsc.stopController()
-#        gpsc.join()

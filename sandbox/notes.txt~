@@ -156,4 +156,38 @@ Internet connection via USB modem on RPi
 - Run 'netstat -rn' to see default route
 - Run 'sudo route del default gw 192.168.2.1'
 - Run 'sudo route add default ppp0', so rpi knows to use modem instead of eth for internet
+- Try ping with IP address instead of its name
 - Run 'sudo killall pppd' to close all pppd thread
+
++++++++++++++
+14 Dec 2014
++++++++++++++
+Killing qos process that run on background
+- show qos.py process 'ps aux | grep qos.py'
+- get the PID (the second column) of python qos.py and /bin/sh -c python qos.py
+- kill process with 'sudo kill PID'
+
++++++++++++++
+15 Dec 2014
++++++++++++++
+- Run application with cronjob (http://www.devils-heaven.com/raspberry-pi-cron-jobs/)
+- Create shell script that run python script that check if application has been running or not. If not, start it.
+	- shell script: launcherqos.sh (make it executable) chmod a+x launcherqos.sh
+	- python script to check main app: checkqos.py
+		- on checkqos, we can test the method of getting parameter value (it will run or not with cron job)
+	- python script to run: qos.py (not tested yet)
+- For testing purpose:
+	- crondate.txt - date of cron execution (indicate running app)
+        - cronlog.txt - output of cron execution
+	- set file checkqos.py for testing purpose
+		- Note that in this configuration, we can't do testing for long time because it (checkqos.py)
+		  will be executed multiple times
+	- command 'ps -f | grep qos' to see running app and program flow
+	- see mysql database to check if the program running smoothly,
+	  if not, we can see output in cronlog.txt.
+	  But beware that the content of the file will be change overtime
+
+
+
+
+
