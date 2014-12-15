@@ -305,7 +305,7 @@ if __name__ == '__main__':
 #        gpsc.start()
         while True:
             #collect data
-            for _ in range(2): #how many of data collection is done before sent to cloud
+            for _ in range(1): #how many of data collection is repeated before sent to cloud
 #                lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
 #                print "GPS - Loc lat: %s Loc lng: %s\r\n" %(lat,lng)
                 listModem = []
@@ -317,9 +317,9 @@ if __name__ == '__main__':
             #filter new and valid data (future feature)
             #send data to cloud
             print "send data to cloud"
-#            op = listModem[0].operator
-#            ttyUsb = listModem[0].symlink
-#            senddata.sendingdata(op,ttyUsb)
+            op = listModem[0].operator
+            ttyUsb = listModem[0].symlink
+            senddata.sendingdata(op,ttyUsb)
             
     except(KeyboardInterrupt, SystemExit):
         print "killing gps thread thus kill app too"

@@ -5,7 +5,7 @@ import checkqosparam
 
 def main():
     try:
-        #checkqosparam.qosmain()
+        #checkqosparam.qosmain() # for testing
         processQos = subprocess.Popen(
             ['ps -ef | grep qos.py'],
             stdout = subprocess.PIPE,
