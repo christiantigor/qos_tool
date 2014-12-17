@@ -146,6 +146,7 @@ MySQL Local Database
 Important command:
 - change column data type: http://stackoverflow.com/questions/1356866/how-do-i-change-the-data-type-for-a-column-in-mysql
 - insert column after other column: http://blog.sqlauthority.com/2013/03/11/sql-server-how-to-add-column-at-specific-location-in-table/
+- insert to first column: https://www.hscripts.com/tutorials/mysql/alter1-tables.php
 
 +++++++++++++
 11 Dec 2014
@@ -187,7 +188,7 @@ Killing qos process that run on background
 	  if not, we can see output in cronlog.txt.
 	  But beware that the content of the file will be change overtime
 
-
-
-
-
++++++++++++++
+17 Dec 2014
++++++++++++++
+- Sms cost from Telkomsel to indosat: IDR 150

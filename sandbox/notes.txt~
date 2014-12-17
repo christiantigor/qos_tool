@@ -146,6 +146,7 @@ MySQL Local Database
 Important command:
 - change column data type: http://stackoverflow.com/questions/1356866/how-do-i-change-the-data-type-for-a-column-in-mysql
 - insert column after other column: http://blog.sqlauthority.com/2013/03/11/sql-server-how-to-add-column-at-specific-location-in-table/
+- insert to first column: https://www.hscripts.com/tutorials/mysql/alter1-tables.php
 
 +++++++++++++
 11 Dec 2014
@@ -178,7 +179,7 @@ Killing qos process that run on background
 	- python script to run: qos.py (not tested yet)
 - For testing purpose:
 	- crondate.txt - date of cron execution (indicate running app)
-        - cronlog.txt - output of cron execution
+        - cronlog.txt - output of cron execution (indicate if app running correctly or error)
 	- set file checkqos.py for testing purpose
 		- Note that in this configuration, we can't do testing for long time because it (checkqos.py)
 		  will be executed multiple times

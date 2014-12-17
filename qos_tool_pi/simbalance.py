@@ -24,9 +24,10 @@ def xlBalance(ttyUsbx):
         return balance[0]
         modem.close()
     except:
-        print "!!! XL Balance error !!!"
+        #print "!!! XL Balance error !!!"
         modem.close()
-        sys.exit(1)
+        return "None"
+        #sys.exit(1)
 
 #TELKOMSEL
 def telkomselBalance(ttyUsbx):
@@ -47,9 +48,10 @@ def telkomselBalance(ttyUsbx):
         return balance[0]
         modem.close()
     except:
-        print "!!! TELKOMSEL Balance error !!!"
+        #print "!!! TELKOMSEL Balance error !!!"
         modem.close()
-        sys.exit(1)
+        return "None"
+        #sys.exit(1)
 
 #INDOSAT
 def indosatBalance(ttyUsbx):
@@ -70,8 +72,9 @@ def indosatBalance(ttyUsbx):
         return balance[0]
         modem.close()
     except:
-        print "!!! INDOSAT Balance error !!!"
+        #print "!!! INDOSAT Balance error !!!"
         modem.close()
-        sys.exit(1)
+        return "None"
+        #sys.exit(1)
 
 #3

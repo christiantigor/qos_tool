@@ -106,7 +106,7 @@ def rssi(ttyUsbx):
     except:
         #print "!!! get rssi error  !!!"
         modem.close()
-        return "0"
+        return "None"
         #sys.exit(1)
 
 #get sysmode and submode
@@ -125,7 +125,7 @@ def mode(ttyUsbx):
     except:
         #print "!!! get sysmode and submode error  !!!"
         modem.close()
-        return "unknown","unknown"
+        return "None","None"
         #sys.exit(1)
 
 #get sms delivery percentage
@@ -183,9 +183,10 @@ def smsdelivery(phoneNum,trial,ttyUsbx):
         return ocr
         
     except:
-        print "!!! get sms delivery percentage error  !!!"
+        #print "!!! get sms delivery percentage error  !!!"
         modem.close()
-        sys.exit(1)
+        return 0 #special case for sms return 0 instead of "None"
+        #sys.exit(1)
 
 #get 3SQM - single sided speech quality measurement
 def speechquality(operator,ttyUsbStream,ttyUsbx):
@@ -328,7 +329,7 @@ def pingduration ():
             else:
                 #print "!!! regex ping no output error  !!!"
                 ping.terminate()
-                return "0.0"
+                return "None"
             ping.terminate()
         except:
             #print "!!! run ping subprocess error  !!!"
@@ -336,7 +337,7 @@ def pingduration ():
             #sys.exit(1)
     except:
         #print "!!! get ping duration error  !!!"
-        return "0.0"
+        return "None"
         #sys.exit(1)
 
 #get dload and uload speed - used on internet quality (see below)
@@ -363,7 +364,7 @@ def inetspeed ():
                     uload = umatcher.findall(out)
                     download = dload[0]
                     upload = uload[0]
-                    return download, upload
+                    return download, upload #notes: if no inet connection speedtest-cli-qos return 0.00 and not "None"
                 except:
                     print "!!! regex inetspeed error  !!!"
                     inetspeed.terminate()
@@ -375,11 +376,11 @@ def inetspeed ():
         except:
             #print "!!! run inetspeed subprocess error  !!!"
             inetspeed.terminate()
-            return "0.0","0.0"
             #sys.exit(1)
     except:
-        print "!!! get inetspeed error !!!"
-        sys.exit(1)
+        #print "!!! get inetspeed error !!!"
+        return "None","None"
+        #sys.exit(1)
 
 #internet quality
 def inetquality (operator,ttyUsbx):

@@ -4,16 +4,18 @@ import subprocess
 def sendingdata (operator,ttyUsbx):
     try:
         #get parameter for wvdial
-        if operator == '"XL"':
+        if operator == "XL":
             op = 'xl'
-        elif operator == '"TELKOMSEL"':
+        elif operator == "TELKOMSEL":
             op = 'telkomsel'
-        elif operator == '"INDOSAT"':
+        elif operator == "INDOSAT":
             op = 'indosat'
         else:
+            print "operator unknown"
             return
         #run wvdial
         cmd = "sudo wvdial " + op + " " + ttyUsbx + " &"
+        #print cmd
         subprocess.Popen([cmd], shell = True)
         time.sleep(10)
         #set default route
@@ -25,7 +27,8 @@ def sendingdata (operator,ttyUsbx):
             stderr = subprocess.PIPE,
             shell = True
         )
-        sendtocloud.communicate()
+        outSend, errorSend = sendtocloud.communicate()
+        print outSend
         time.sleep(5)
         #stop wvdial
         cmd = "sudo poff.wvdial " + op + " " + ttyUsbx

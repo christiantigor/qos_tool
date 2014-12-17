@@ -235,6 +235,34 @@ def main(latitude,longitude):
             print "Sysmode: %s Submode: %s" % (sysmode,submode)
             time.sleep(1)
 
+            #get internet quality
+            ping, dload, uload = qosparam.inetquality(modem.operator,modem.symlink)
+            modem.ping = ping
+            modem.dload = dload
+            modem.uload = uload
+            print "Ping duration: %s ms" %ping
+            print "dload: %s Mbits/s uload: %s Mbits/s" %(dload,uload)
+            time.sleep(1)
+
+            #check get internet quality success then get call and sms quality, otherwise return none
+            if all(x is not None and x != "None" for x in(modem.ping, modem.dload, modem.uload)):
+                #get call quality
+                sQuality = qosparam.speechquality(modem.operator,modem.stream,modem.symlink)
+                modem.sQuality = sQuality
+                print "MOS: %s" %sQuality
+                time.sleep(1)
+
+                #get sms delivery occurence (for demo)
+                phone = "+6281514797598"
+                trial = 1
+                ocr = qosparam.smsdelivery(phone,trial,modem.symlink)
+                modem.smsPerc = ocr
+                print "[%s]SMS:%d has delivery report" % (modem.operator,ocr)
+                time.sleep(1)
+            else:
+                modem.sQuality = "None"
+                modem.smsPerc = "None"
+
             #get sms delivery percentage
             #//OK
             #phone = "+6281514797598"
@@ -250,24 +278,6 @@ def main(latitude,longitude):
                 #ocr = qosparam.smsdelivery(phone,trial,modem.symlink)
                 #perc = ocr / float(trial) * 100
                 #print '[%s]SMS:%d sent, %.2f%% has delivery report' % (operator,trial,perc)
-
-            #get call quality
-            sQuality = qosparam.speechquality(modem.operator,modem.stream,modem.symlink)
-            modem.sQuality = sQuality
-            print "MOS: %s" %sQuality
-            time.sleep(1)
-
-            #get call success (do not implement yet)
-
-            #get internet quality
-            ping, dload, uload = qosparam.inetquality(modem.operator,modem.symlink)
-            modem.ping = ping
-            modem.dload = dload
-            modem.uload = uload
-            print "Ping duration: %s ms" %ping
-            print "dload: %s Mbits/s uload: %s Mbits/s" %(dload,uload)
-            time.sleep(1)
-
     except:
         print "!!! get qos parameter error !!!"
         #sys.exit(1)
@@ -280,13 +290,26 @@ def main(latitude,longitude):
         #use python context manager for automatic rollback
 
         for m in listModem:
-            cmd = ('INSERT INTO testresult VALUES (NULL,CURRENT_DATE(),NOW(),"'+str(latitude)+'","'+str(longitude)+'",'+str(m.operator)+
-                   ',"'+str(m.balance)+'","'+str(m.rssi)+'","'+str(m.sysmode)+'","'+str(m.submode)+'","'+str(m.smsPerc)+
-                   '","'+str(m.sQuality)+'","'+str(m.ping)+'","'+str(m.dload)+'","'+str(m.uload)+'","new"'+')'
+            #remove "" from operator
+            m.operator = m.operator.replace('"',"")
+            #put to rawtestresult
+            cmd = ('INSERT INTO rawtestresult VALUES (NULL,CURRENT_DATE(),NOW(),"'+str(latitude)+'","'+str(longitude)+'","'+str(m.operator)+
+                    '","'+str(m.balance)+'","'+str(m.rssi)+'","'+str(m.sysmode)+'","'+str(m.submode)+'","'+str(m.smsPerc)+
+                    '","'+str(m.sQuality)+'","'+str(m.ping)+'","'+str(m.dload)+'","'+str(m.uload)+'","new"'+')'
                   )
             print cmd
             with db:
                 curs.execute(cmd)
+
+            #filter valid data
+            if all(x is not None and x != "None" for x in (m.operator, m.balance, m.rssi, m.sysmode, m.submode, m.smsPerc, m.sQuality, m.ping, m.dload, m.uload)):
+                cmd = ('INSERT INTO testresult VALUES (NULL,CURRENT_DATE(),NOW(),"'+str(latitude)+'","'+str(longitude)+'","'+str(m.operator)+
+                       '","'+str(m.balance)+'","'+str(m.rssi)+'","'+str(m.sysmode)+'","'+str(m.submode)+'","'+str(m.smsPerc)+
+                       '","'+str(m.sQuality)+'","'+str(m.ping)+'","'+str(m.dload)+'","'+str(m.uload)+'","new"'+')'
+                      )
+                print cmd
+                with db:
+                    curs.execute(cmd)
         db.close()
     except:
         print "!!! problems put data to database  !!!"
@@ -295,33 +318,33 @@ def main(latitude,longitude):
 
 if __name__ == '__main__':
 #    time.sleep(20) #sleep after booting up
-#    try:
-#        gpsInit()
-#    except:
-#        print "init app error"
-#        sys.exit(1)
-#    gpsc = gpsController()
     try:
-#        gpsc.start()
+        gpsInit()
+    except:
+        print "init app error"
+        sys.exit(1)
+    gpsc = gpsController()
+    try:
+        gpsc.start()
         while True:
             #collect data
             for _ in range(1): #how many of data collection is repeated before sent to cloud
-#                lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
-#                print "GPS - Loc lat: %s Loc lng: %s\r\n" %(lat,lng)
+                lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
+                print "GPS - Loc lat: %s Loc lng: %s\r\n" %(lat,lng)
                 listModem = []
-                lat = "None" #delete
-                lng = "None" #delete
+                #lat = "None" #delete
+                #lng = "None" #delete
                 main(lat,lng)
                 print "\r\n"
                 time.sleep(2)
-            #filter new and valid data (future feature)
             #send data to cloud
-            print "send data to cloud"
+            print "send new data to cloud"
             op = listModem[0].operator
             ttyUsb = listModem[0].symlink
+            #print op,ttyUsb
             senddata.sendingdata(op,ttyUsb)
             
     except(KeyboardInterrupt, SystemExit):
         print "killing gps thread thus kill app too"
-#        gpsc.stopController()
-#        gpsc.join()
+        gpsc.stopController()
+        gpsc.join()
