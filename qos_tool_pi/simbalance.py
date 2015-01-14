@@ -19,6 +19,8 @@ def xlBalance(ttyUsbx):
         pattern = r'"([A-Za-z0-9_]*)"'
         texts = re.findall(pattern,rspn)
         dec = gsmpdu.decode(texts[1])
+        print "dec"
+        print dec
         balMatcher = re.compile("Pulsa (\d+)")
         balance = balMatcher.findall(dec)
         return balance[0]

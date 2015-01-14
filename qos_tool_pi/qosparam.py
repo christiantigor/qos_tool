@@ -3,6 +3,7 @@ from json import dumps
 import simbalance
 import pyaudio
 import wave
+from pydub import AudioSegment
 
 #tower location from mcc-mnc-lac-cid
 def towerlocation(ttyUsbx):
@@ -59,13 +60,31 @@ def towerlocation(ttyUsbx):
 def operator(ttyUsbx):
     try:
         p = "/dev/"+ttyUsbx
-        modem = serial.Serial(port=p,baudrate=115200,timeout=0.5,rtscts=0,xonxoff=0)
+        modem = serial.Serial(port=p,baudrate=115200,timeout=1,rtscts=0,xonxoff=0)
         modem.write("AT+COPS?\r")
         rspn = modem.read(1024)
         pattern = r'"([A-Za-z0-9_]*)"'
         operator = re.search(pattern,rspn)
+        #print operator
+        if operator is None:
+            #start special case for xl modem
+            print "operator is None"
+            #list of available network
+            modem.write("AT+COPS=?\r")
+            rspn = modem.read(1024)
+            time.sleep(1)
+            if re.search('"XL"',rspn):            
+                #connect to xl network
+                modem.write('AT+COPS=1,0,"XL"\r')
+                time.sleep(1)
+                #check network operator again
+                modem.write("AT+COPS?\r")
+                rspn = modem.read(1024)
+                pattern = r'"([A-Za-z0-9_]*)"'
+                operator = re.search(pattern,rspn)
+            #end special case for xl modem
         modem.close()
-        return operator.group() 
+        return operator.group()
     except:
         #print "!!! get network operator error !!!"
         modem.close()
@@ -267,7 +286,12 @@ def speechquality(operator,ttyUsbStream,ttyUsbx):
         stream.close()
         pass
         #sys.exit(1)
-        
+    
+    #increase audio file volume
+    oriAudio = AudioSegment.from_wav(waveOutName)
+    louderAudio = oriAudio + 30
+    louderAudio.export(waveOutName,"wav")
+    
     #calculate speech quality using P.536 algoritm
     try:
         cmd = "./p563 " + waveOutName

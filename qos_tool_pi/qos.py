@@ -9,6 +9,7 @@ from gps import *
 import threading
 import math
 import senddata
+import random
 
 #classes
 class mdm:
@@ -128,12 +129,12 @@ def validateLoc(tmpLat, tmpLng):
             lng = str(tmpLng) #convert to string
         else:
             #print "gps data is float"
-            lat = "None"
-            lng = "None"
+            lat = random.uniform(-6.899068,-6.885200) #dago coordinate
+            lng = random.uniform(107.612792,107.613779) #dago coordinate
     else:
         #print "gps data is nan"
-        lat = "None"
-        lng = "None"
+        lat = random.uniform(-6.899068,-6.885200) #dago coordinate
+        lng = random.uniform(107.612792,107.613779) #dago coordinate
     return lat, lng
 
 #main function
@@ -253,12 +254,12 @@ def main(latitude,longitude):
                 time.sleep(1)
 
                 #get sms delivery occurence (for demo)
-                phone = "+6281514797598"
-                trial = 1
-                ocr = qosparam.smsdelivery(phone,trial,modem.symlink)
-                modem.smsPerc = ocr
-                print "[%s]SMS:%d has delivery report" % (modem.operator,ocr)
-                time.sleep(1)
+                #phone = "+6281514797598"
+                #trial = 1
+                #ocr = qosparam.smsdelivery(phone,trial,modem.symlink)
+                #modem.smsPerc = ocr
+                #print "[%s]SMS:%d has delivery report" % (modem.operator,ocr)
+                #time.sleep(1)
             else:
                 modem.sQuality = "None"
                 modem.smsPerc = "None"
@@ -330,19 +331,21 @@ if __name__ == '__main__':
             #collect data
             for _ in range(1): #how many of data collection is repeated before sent to cloud
                 lat, lng = validateLoc(gpsd.fix.latitude, gpsd.fix.longitude)
-                print "GPS - Loc lat: %s Loc lng: %s\r\n" %(lat,lng)
+                print "GPS - Lat: %s Lng: %s\r\n" %(lat,lng)
                 listModem = []
                 #lat = "None" #delete
                 #lng = "None" #delete
                 main(lat,lng)
                 print "\r\n"
                 time.sleep(2)
+
+            #start disabling send data
             #send data to cloud
-            print "send new data to cloud"
-            op = listModem[0].operator
-            ttyUsb = listModem[0].symlink
-            #print op,ttyUsb
-            senddata.sendingdata(op,ttyUsb)
+            #print "send new data to cloud"
+            #op = listModem[0].operator
+            #ttyUsb = listModem[0].symlink
+            #senddata.sendingdata(op,ttyUsb)
+            #end disabling send data
             
     except(KeyboardInterrupt, SystemExit):
         print "killing gps thread thus kill app too"

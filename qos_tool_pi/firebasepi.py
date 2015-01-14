@@ -10,7 +10,7 @@ firebase = firebase.FirebaseApplication('https://radiant-torch-2376.firebaseio.c
 #get length of table on cloud db
 try:
     table = firebase.get('/qosresult', None)
-    print 'table length on cloud: %d' % len(table)
+    #print 'table length on cloud: %d' % len(table)
 except:
     print '!!! error get length of cloud db  !!!'
     db.close()
@@ -66,7 +66,7 @@ try:
             firebase.put(tab,'dload',str(data[13]))
             firebase.put(tab,'uload',str(data[14]))
             #print str(i)
-            print str(data[0])+' '+str(data[1])+' '+str(data[2])+' '+str(data[3])+' '+str(data[11])+' '+str(data[12]+' '+str(data[13]))
+            #print str(data[0])+' '+str(data[1])+' '+str(data[2])+' '+str(data[3])+' '+str(data[11])+' '+str(data[12]+' '+str(data[13]))
             updatecmd = 'UPDATE testresult SET status = "sent" WHERE id = "%d";' % data[0]
             with db:
                 curs.execute(updatecmd)

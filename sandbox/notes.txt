@@ -183,7 +183,7 @@ Killing qos process that run on background
 	- set file checkqos.py for testing purpose
 		- Note that in this configuration, we can't do testing for long time because it (checkqos.py)
 		  will be executed multiple times
-	- command 'ps -f | grep qos' to see running app and program flow
+	- command 'ps -ef | grep qos' to see running app and program flow
 	- see mysql database to check if the program running smoothly,
 	  if not, we can see output in cronlog.txt.
 	  But beware that the content of the file will be change overtime
@@ -192,3 +192,14 @@ Killing qos process that run on background
 17 Dec 2014
 +++++++++++++
 - Sms cost from Telkomsel to indosat: IDR 150
+
++++++++++++++
+13 Jan 2015
++++++++++++++
+- Run whatsapp from raspberry pi
+- Command 'yowsup-cli demos --config config --send 6281514797598 "pesan yang dikirim"'
+
++++++++++++++
+14 Jan 2015
++++++++++++++
+- Set current rating for USB to 1.2A with (https://projects.drogon.net/testing-setting-the-usb-current-limiter-on-the-raspberry-pi-b/)
